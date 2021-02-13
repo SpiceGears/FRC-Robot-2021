@@ -4,6 +4,7 @@
 
 package frc.robot.commands.Drive;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.Robot;
@@ -16,16 +17,19 @@ public class teleopDrive extends CommandBase {
 
   double robotVelocity;
   double robotTurn;
+  double maxVelocity, currentVelocity, acceleratingTimeStart, acceleratingTime = 0;
 
   public teleopDrive() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(driveTrain);
+    addRequirements(Robot.driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     driveTrain.stopDriveTrainMotors();
+
+    currentVelocity = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
 
     robotVelocity = 0;
     robotTurn = 0;
@@ -34,17 +38,30 @@ public class teleopDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    getMaxLeftMasterVelocityTickPer100ms();
+    logToSmartDashboardteleOpDrive();
     joystickRun();
   }
 
   private void joystickRun(){
-    if(Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) >= constants.kDriverJoystickDeadzone || Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) > constants.kDriverJoystickDeadzone){
+    if(Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) >= constants.kDriverJoystickDeadzone || Math.abs(Robot.oI.getDriverJoy().getRawAxis(4)) > constants.kDriverJoystickDeadzone){
       robotVelocity = Robot.oI.getDriverJoy().getRawAxis(1);
       robotTurn = Robot.oI.getDriverJoy().getRawAxis(4);
+      driveTrain.setSpeedDriveTrainPercentOutput(robotVelocity, robotVelocity, robotTurn / 4);
+    }else {
+      driveTrain.setSpeedDriveTrainPercentOutput(0, 0);
     }
+  }
 
-    driveTrain.setSpeedDriveTrainPercentOutput(robotVelocity, robotVelocity, robotTurn);
-
+  private void getMaxLeftMasterVelocityTickPer100ms(){
+    if(Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity() == 0){
+      acceleratingTimeStart = System.currentTimeMillis();
+    }
+    currentVelocity = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
+    if (maxVelocity <= currentVelocity){
+      maxVelocity = currentVelocity;
+      acceleratingTime = (System.currentTimeMillis() - acceleratingTimeStart)/1000;
+    }
   }
 
   // Called once the command ends or is interrupted.
@@ -55,5 +72,11 @@ public class teleopDrive extends CommandBase {
   @Override
   public boolean isFinished() {
     return false;
+  }
+
+  public void logToSmartDashboardteleOpDrive(){
+    SmartDashboard.putNumber("accelerating time", acceleratingTime);
+    SmartDashboard.putNumber("maxVelocity tick/100ms", maxVelocity);
+    SmartDashboard.putNumber("currentVelocity tick/100ms", currentVelocity);
   }
 }

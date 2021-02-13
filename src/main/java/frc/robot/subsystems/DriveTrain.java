@@ -16,9 +16,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import org.opencv.core.Mat;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
+import frc.robot.commands.Drive.teleopDrive;
 import frc.robot.controllers.PIDcontroller;
 
 public class DriveTrain extends SubsystemBase {
@@ -28,16 +30,21 @@ public class DriveTrain extends SubsystemBase {
   final PortMap portMap;
   final PIDcontroller pidController;
 
-  private WPI_TalonSRX leftMasterDriveTrain, rightMasterDriveTrain;
+  public WPI_TalonSRX leftMasterDriveTrain, rightMasterDriveTrain;
   private WPI_VictorSPX leftSlaveDriveTrainFirst, leftSlaveDriveTrainSecond, rightSlaveDriveTrainFirst, rightSlaveDriveTrainSecond;
 
   public DriveTrain() {
     constants = new Constants();
     pidController = new PIDcontroller();
     portMap = new PortMap();
-
+    // setDefaultCommand(new teleopDrive());
     configurateMotors();
   }
+
+//   public void initDefaultCommand() {
+//     // Set the default command for a subsystem here.
+//     setDefaultCommand(new teleopDrive());
+// }
 
   private void configurateMotors(){
     leftMasterDriveTrain = new WPI_TalonSRX(portMap.kLeftMasterDrive);
@@ -78,6 +85,10 @@ public class DriveTrain extends SubsystemBase {
   private double leftWheelOutputWithTurn = 0;
   private double rightWheelOutputWithTurn = 0;
 
+  public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput){
+    setSpeedDriveTrainPercentOutput(leftPercentageOutput, rightPercentageOutput, 0);
+  }
+
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
     
 
@@ -91,9 +102,11 @@ public class DriveTrain extends SubsystemBase {
       rightWheelOutputWithTurn = leftPercentageOutput;
       leftWheelOutputWithTurn = rightPercentageOutput;
     }
-
-    leftMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
-    rightMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
+    
+    leftMasterDriveTrain.set(ControlMode.PercentOutput, leftWheelOutputWithTurn);
+    rightMasterDriveTrain.set(ControlMode.PercentOutput, -rightWheelOutputWithTurn);
+    // leftMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
+    // rightMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
   }
 
   public void stopDriveTrainMotors(){
@@ -112,6 +125,10 @@ public class DriveTrain extends SubsystemBase {
 
   public double getRightMasterVelocityMpS(){ // m/s
     return getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
+  }
+
+  public double getMaxLeftMasterVelocityTickPer100ms(){ // tick/100ms
+    return leftMasterDriveTrain.getSelectedSensorVelocity();
   }
 
   public double getWheelCircuit(){
