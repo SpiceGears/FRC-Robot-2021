@@ -13,14 +13,10 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import org.opencv.core.Mat;
-
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
-import frc.robot.commands.Drive.teleopDrive;
 import frc.robot.controllers.PIDcontroller;
 
 public class DriveTrain extends SubsystemBase {
@@ -55,16 +51,37 @@ public class DriveTrain extends SubsystemBase {
     rightSlaveDriveTrainFirst = new WPI_VictorSPX(portMap.kRightSlaveBDrive);
     rightSlaveDriveTrainSecond = new WPI_VictorSPX(portMap.kRightSlaveMDrive);
 
-    configureMaster(leftMasterDriveTrain, false);
-    configureMaster(rightMasterDriveTrain, false);
-
+    configLeftMaster(leftMasterDriveTrain);
+    configRightMaster(rightMasterDriveTrain);
+    
     leftSlaveDriveTrainFirst.follow(leftMasterDriveTrain);
     leftSlaveDriveTrainSecond.follow(leftMasterDriveTrain);
     rightSlaveDriveTrainFirst.follow(rightMasterDriveTrain);
     rightSlaveDriveTrainSecond.follow(rightMasterDriveTrain);
   }
 
-  public void configureMaster(WPI_TalonSRX talon, boolean invert){
+  private void configLeftMaster(WPI_TalonSRX talon){
+    talon.configFactoryDefault();
+
+    configureMaster(talon, false);
+
+    talon.config_kP(constants.kPIDLoopIdx, constants.kPDriveTrainLeft, constants.kTimeoutMs);
+    talon.config_kI(constants.kPIDLoopIdx, constants.kIDriveTrainLeft, constants.kTimeoutMs);
+    talon.config_kD(constants.kPIDLoopIdx, constants.kDDriveTrainLeft, constants.kTimeoutMs);
+
+  }
+
+  private void configRightMaster(WPI_TalonSRX talon){
+    talon.configFactoryDefault();
+
+    configureMaster(talon, false);
+
+    talon.config_kP(constants.kPIDLoopIdx, constants.kPDriveTrainRight, constants.kTimeoutMs);
+    talon.config_kI(constants.kPIDLoopIdx, constants.kIDriveTrainRight, constants.kTimeoutMs);
+    talon.config_kD(constants.kPIDLoopIdx, constants.kDDriveTrainRight, constants.kTimeoutMs);
+  }
+
+  private void configureMaster(WPI_TalonSRX talon, boolean invert){
     talon.setStatusFramePeriod(StatusFrameEnhanced.Status_2_Feedback0, 5, 100);
     final ErrorCode sensorPresent = talon.configSelectedFeedbackSensor(FeedbackDevice
             .CTRE_MagEncoder_Relative, 0, 100); //primary closed-loop, 100 ms timeout
@@ -85,13 +102,23 @@ public class DriveTrain extends SubsystemBase {
   private double leftWheelOutputWithTurn = 0;
   private double rightWheelOutputWithTurn = 0;
 
-  public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput){
-    setSpeedDriveTrainPercentOutput(leftPercentageOutput, rightPercentageOutput, 0);
+  public void setSpeedDriveTrainVelocityOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
+    if(Math.abs(leftPercentageOutput) + turn >= 1){
+      rightWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
+      leftWheelOutputWithTurn = leftPercentageOutput;
+    }else if(Math.abs(rightPercentageOutput) + turn >= 1){
+      rightWheelOutputWithTurn = leftPercentageOutput;
+      leftWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
+    }else{
+      rightWheelOutputWithTurn = leftPercentageOutput;
+      leftWheelOutputWithTurn = rightPercentageOutput;
+    }
+
+    leftMasterDriveTrain.set(ControlMode.Velocity, leftWheelOutputWithTurn * 500.0 * 4096 / 600);   // ustawia max 500 RPM
+    rightMasterDriveTrain.set(ControlMode.Velocity, -rightWheelOutputWithTurn * 500.0 * 4096 / 600);// ustawia max 500 RPM
   }
 
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
-    
-
     if(Math.abs(leftPercentageOutput) + turn >= 1){
       rightWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
       leftWheelOutputWithTurn = leftPercentageOutput;

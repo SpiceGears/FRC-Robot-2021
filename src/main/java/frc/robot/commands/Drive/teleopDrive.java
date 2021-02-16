@@ -49,7 +49,7 @@ public class teleopDrive extends CommandBase {
       robotTurn = Robot.oI.getDriverJoy().getRawAxis(4);
       driveTrain.setSpeedDriveTrainPercentOutput(robotVelocity, robotVelocity, robotTurn / 4);
     }else {
-      driveTrain.setSpeedDriveTrainPercentOutput(0, 0);
+      driveTrain.setSpeedDriveTrainPercentOutput(0, 0, 0);
     }
   }
 
