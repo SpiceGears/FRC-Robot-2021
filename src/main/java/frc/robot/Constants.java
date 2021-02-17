@@ -24,13 +24,13 @@ public final class Constants {
     public static final int kTimeoutMs = 30;
 
     //Drive Train
-    public static final double kPDriveTrainLeft = 1.0;
+    public static final double kPDriveTrainLeft = 0.005;
     public static final double kIDriveTrainLeft = 0.0;
     public static final double kDDriveTrainLeft = 0.0;
 
-    public static final double kPDriveTrainRight = 1.0;
-    public static final double kIDriveTrainRight = 0.0;
-    public static final double kDDriveTrainRight = 0.0;
+    public static final double kPDriveTrainRight = kPDriveTrainLeft;
+    public static final double kIDriveTrainRight = kIDriveTrainLeft;
+    public static final double kDDriveTrainRight = kDDriveTrainLeft;
 
     //Joystick
     public static final double kDriverJoystickDeadzone = 0.12;

@@ -17,7 +17,7 @@ public class teleopDrive extends CommandBase {
 
   double robotVelocity;
   double robotTurn;
-  double maxVelocity, currentVelocity, acceleratingTimeStart, acceleratingTime = 0;
+  double maxVelocity, currentVelocityLeft, acceleratingTimeStart, acceleratingTime = 0;
 
   public teleopDrive() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -29,7 +29,7 @@ public class teleopDrive extends CommandBase {
   public void initialize() {
     driveTrain.stopDriveTrainMotors();
 
-    currentVelocity = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
+    currentVelocityLeft = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
 
     robotVelocity = 0;
     robotTurn = 0;
@@ -47,7 +47,8 @@ public class teleopDrive extends CommandBase {
     if(Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) >= constants.kDriverJoystickDeadzone || Math.abs(Robot.oI.getDriverJoy().getRawAxis(4)) > constants.kDriverJoystickDeadzone){
       robotVelocity = Robot.oI.getDriverJoy().getRawAxis(1);
       robotTurn = Robot.oI.getDriverJoy().getRawAxis(4);
-      driveTrain.setSpeedDriveTrainPercentOutput(robotVelocity, robotVelocity, robotTurn / 4);
+      driveTrain.setSpeedDriveTrainVelocityOutput(robotVelocity, robotVelocity, robotTurn / 1.1);
+      // driveTrain.setSpeedDriveTrainPercentOutput(robotVelocity, robotVelocity, robotTurn / 4);
     }else {
       driveTrain.setSpeedDriveTrainPercentOutput(0, 0, 0);
     }
@@ -57,9 +58,9 @@ public class teleopDrive extends CommandBase {
     if(Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity() == 0){
       acceleratingTimeStart = System.currentTimeMillis();
     }
-    currentVelocity = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
-    if (maxVelocity <= currentVelocity){
-      maxVelocity = currentVelocity;
+    currentVelocityLeft = Robot.driveTrain.leftMasterDriveTrain.getSelectedSensorVelocity();
+    if (maxVelocity <= currentVelocityLeft){
+      maxVelocity = currentVelocityLeft;
       acceleratingTime = (System.currentTimeMillis() - acceleratingTimeStart)/1000;
     }
   }
@@ -77,6 +78,9 @@ public class teleopDrive extends CommandBase {
   public void logToSmartDashboardteleOpDrive(){
     SmartDashboard.putNumber("accelerating time", acceleratingTime);
     SmartDashboard.putNumber("maxVelocity tick/100ms", maxVelocity);
-    SmartDashboard.putNumber("currentVelocity tick/100ms", currentVelocity);
+    SmartDashboard.putNumber("currentVelocity left tick/100ms", currentVelocityLeft);
+    SmartDashboard.putNumber("currentVelocity right tick/100ms", -Robot.driveTrain.rightMasterDriveTrain.getSelectedSensorVelocity());
+    SmartDashboard.putNumber("robotLeftWheels velocity m/s", Robot.driveTrain.getLeftMasterVelocityMpS());
+    SmartDashboard.putNumber("robotRightWheels velocity m/s", Robot.driveTrain.getRightMasterVelocityMpS());
   }
 }

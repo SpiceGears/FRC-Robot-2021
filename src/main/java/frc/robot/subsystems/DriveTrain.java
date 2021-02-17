@@ -110,12 +110,14 @@ public class DriveTrain extends SubsystemBase {
       rightWheelOutputWithTurn = leftPercentageOutput;
       leftWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
     }else{
-      rightWheelOutputWithTurn = leftPercentageOutput;
-      leftWheelOutputWithTurn = rightPercentageOutput;
+      rightWheelOutputWithTurn = leftPercentageOutput + turn;
+      leftWheelOutputWithTurn = rightPercentageOutput - turn;
     }
 
-    leftMasterDriveTrain.set(ControlMode.Velocity, leftWheelOutputWithTurn * 500.0 * 4096 / 600);   // ustawia max 500 RPM
-    rightMasterDriveTrain.set(ControlMode.Velocity, -rightWheelOutputWithTurn * 500.0 * 4096 / 600);// ustawia max 500 RPM
+    leftMasterDriveTrain.set(ControlMode.Velocity, leftWheelOutputWithTurn * 10000.0 * 4096 / 600);   // ustawia max 500 RPM
+
+    // rightMasterDriveTrain.set(ControlMode.Velocity, 0);
+    rightMasterDriveTrain.set(ControlMode.Velocity, -rightWheelOutputWithTurn * 10000.0 * 4096 / 600);// ustawia max 500 RPM
   }
 
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
@@ -159,7 +161,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getWheelCircuit(){
-    return Math.PI * 0.20;
+    return Math.PI * 0.2032;
   }
 
   @Override
