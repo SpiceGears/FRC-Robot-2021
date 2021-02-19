@@ -12,8 +12,16 @@ import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
@@ -76,7 +84,7 @@ public class DriveTrain extends SubsystemBase {
 
     configureMaster(talon, false);
 
-    talon.config_kP(constants.kPIDLoopIdx, constants.kPDriveTrainRight, constants.kTimeoutMs);
+    talon.config_kP(Constants.kPIDLoopIdx, constants.kPDriveTrainRight, constants.kTimeoutMs);
     talon.config_kI(constants.kPIDLoopIdx, constants.kIDriveTrainRight, constants.kTimeoutMs);
     talon.config_kD(constants.kPIDLoopIdx, constants.kDDriveTrainRight, constants.kTimeoutMs);
   }
@@ -101,6 +109,15 @@ public class DriveTrain extends SubsystemBase {
  
   private double leftWheelOutputWithTurn = 0;
   private double rightWheelOutputWithTurn = 0;
+
+  /**
+   * Sets robot velocity based on percentage output.
+   * ControlMode.Velocity
+   * 
+   * @param leftPercentageOutput left master robot speed percentage.
+   * @param rightPercentageOutput right master robot speed percentage.
+   * @param turn robot turn value.
+   */
 
   public void setSpeedDriveTrainVelocityOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
     if(Math.abs(leftPercentageOutput) + turn >= 1){
@@ -162,6 +179,82 @@ public class DriveTrain extends SubsystemBase {
 
   public double getWheelCircuit(){
     return Math.PI * 0.2032;
+  }
+
+  /**
+   * ---------------------------------------------
+   * ----------------=============----------------
+   * ---------------=  Autonomus  =---------------
+   * ----------------=============----------------
+   * ---------------------------------------------
+   *  */
+
+  private DifferentialDrive diffDrive;
+  private AHRS  gyro;
+  private DifferentialDriveOdometry odometry;
+  
+
+  public void autonomousInit(){
+    resetEncodersDriveTrain();
+    gyro = new AHRS(portMap.gyroPort);
+    diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
+
+    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+  }
+
+  public void autonomusPerodoic(){
+    odometry.update(gyro.getRotation2d(), leftMasterDriveTrain.getSelectedSensorPosition(),
+        rightMasterDriveTrain.getSelectedSensorPosition());
+  }
+
+  public Pose2d getPose() {
+    return odometry.getPoseMeters();
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(getLeftMasterVelocityMpS(), getRightMasterVelocityMpS());
+  }
+
+  public void resetOdometry(Pose2d pose) {
+    resetEncodersDriveTrain();
+    odometry.resetPosition(pose, gyro.getRotation2d());
+  }
+
+  public void driveDriveTrainByVoltage(double leftVolts, double rightVolts){
+    leftMasterDriveTrain.setVoltage(leftVolts);
+    rightMasterDriveTrain.setVoltage(-rightVolts);
+  }
+
+  public double getAverageEncoderDistance() {
+    return (getLeftDistanceMeters() + getRightMasterDistanceMeters()) / 2.0;
+  }
+
+  public void resetGyro(){
+    gyro.reset();
+  }
+
+  public double getHeading() {
+    return gyro.getRotation2d().getDegrees();
+  }
+
+  public double getTurnRate() {
+    return -gyro.getRate();
+  }
+
+  /**
+   * @return Left wheel distance in meters.
+   */
+
+  private double getLeftDistanceMeters(){
+    return getWheelCircuit() * leftMasterDriveTrain.getSelectedSensorPosition()/4096;
+  }
+
+  /**
+   * @return Right wheel distance in meters.
+   */
+
+  private double getRightMasterDistanceMeters(){
+    return getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
   }
 
   @Override
