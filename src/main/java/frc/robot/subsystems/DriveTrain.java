@@ -17,14 +17,26 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
+import frc.robot.Robot;
 import frc.robot.controllers.PIDcontroller;
 
 public class DriveTrain extends SubsystemBase {
@@ -72,10 +84,10 @@ public class DriveTrain extends SubsystemBase {
     talon.configFactoryDefault();
 
     configureMaster(talon, false);
-
-    talon.config_kP(constants.kPIDLoopIdx, constants.kPDriveTrainLeft, constants.kTimeoutMs);
-    talon.config_kI(constants.kPIDLoopIdx, constants.kIDriveTrainLeft, constants.kTimeoutMs);
-    talon.config_kD(constants.kPIDLoopIdx, constants.kDDriveTrainLeft, constants.kTimeoutMs);
+  
+    talon.config_kP(Constants.kPIDLoopIdx, Constants.kPDriveTrainLeft, Constants.kTimeoutMs);
+    talon.config_kI(Constants.kPIDLoopIdx, Constants.kIDriveTrainLeft, Constants.kTimeoutMs);
+    talon.config_kD(Constants.kPIDLoopIdx, Constants.kDDriveTrainLeft, Constants.kTimeoutMs);
 
   }
 
@@ -84,9 +96,9 @@ public class DriveTrain extends SubsystemBase {
 
     configureMaster(talon, false);
 
-    talon.config_kP(Constants.kPIDLoopIdx, constants.kPDriveTrainRight, constants.kTimeoutMs);
-    talon.config_kI(constants.kPIDLoopIdx, constants.kIDriveTrainRight, constants.kTimeoutMs);
-    talon.config_kD(constants.kPIDLoopIdx, constants.kDDriveTrainRight, constants.kTimeoutMs);
+    talon.config_kP(Constants.kPIDLoopIdx, Constants.kPDriveTrainRight, Constants.kTimeoutMs);
+    talon.config_kI(Constants.kPIDLoopIdx, Constants.kIDriveTrainRight, Constants.kTimeoutMs);
+    talon.config_kD(Constants.kPIDLoopIdx, Constants.kDDriveTrainRight, Constants.kTimeoutMs);
   }
 
   private void configureMaster(WPI_TalonSRX talon, boolean invert){
@@ -165,12 +177,19 @@ public class DriveTrain extends SubsystemBase {
     rightMasterDriveTrain.setSelectedSensorPosition(0.0);
   }
 
-  public double getLeftMasterVelocityMpS(){ // m/s
+  /**
+   * @return wheels speed in m/s
+   */
+
+  public double getLeftMasterVelocityMpS(){
     return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
   }
 
-  public double getRightMasterVelocityMpS(){ // m/s
-    return getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
+   /**
+   * @return wheels speed in m/s
+   */
+  public double getRightMasterVelocityMpS(){
+    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
   }
 
   public double getMaxLeftMasterVelocityTickPer100ms(){ // tick/100ms
@@ -256,6 +275,8 @@ public class DriveTrain extends SubsystemBase {
   private double getRightMasterDistanceMeters(){
     return getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
   }
+
+  
 
   @Override
   public void periodic() {
