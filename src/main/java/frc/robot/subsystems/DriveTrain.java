@@ -107,7 +107,7 @@ public class DriveTrain extends SubsystemBase {
    * @return calcuteted wheel speed with turn where [0] is left wheel and [1] is right wheel
    */
   private double[] getLeftWheelOutputWithTurn(double leftPercentageOutput, double rightPercentageOutput, double turn){
-    double[] wheelOutputWithTurn = new double[1];
+    double[] wheelOutputWithTurn = new double[2];
 
     if(Math.abs(leftPercentageOutput) + turn >= 1){
       wheelOutputWithTurn[0] = leftPercentageOutput;
