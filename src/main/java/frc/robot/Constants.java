@@ -15,40 +15,53 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+
     
     //Talon
-    public static final int kLongCANTimeoutMs = 100;
-    public static final double kLongCANTimeoutSec = 0.01;
-    public static final double kDriveVoltageRampRate = 0.0;
 
-    public static final double kSlotIdx = 0;
-    public static final int kPIDLoopIdx = 0;
-    public static final int kTimeoutMs = 30;
+    public static class Talon{
+        public static final int kLongCANTimeoutMs = 100;
+        public static final double kLongCANTimeoutSec = 0.01;
+        public static final double kDriveVoltageRampRate = 0.0;
+    
+        public static final double kSlotIdx = 0;
+        public static final int kPIDLoopIdx = 0;
+        public static final int kTimeoutMs = 30;
+    }
+    
 
     //Drive Train
-    public static final double kPDriveTrainLeft = 0.005;
-    public static final double kIDriveTrainLeft = 0.0;
-    public static final double kDDriveTrainLeft = 0.0;
-
-    public static final double kPDriveTrainRight = kPDriveTrainLeft;
-    public static final double kIDriveTrainRight = kIDriveTrainLeft;
-    public static final double kDDriveTrainRight = kDDriveTrainLeft;
-
-    //Drive Train Autonomus
-	public static final double ksVolts = 0.0;
-    public static final double kvVoltSecondsPerMeter = 0.0;
-    public static final double kTrackwidthMeters = 0.69;
-    public static final DifferentialDriveKinematics kDriveKinematics =
-        new DifferentialDriveKinematics(kTrackwidthMeters);
-    public static final double kaVoltSecondsSquaredPerMeter = 0.0;
+    public static class DriveTrain{
+        public static final double kPDriveTrainLeft = 0.005;
+        public static final double kIDriveTrainLeft = 0.0;
+        public static final double kDDriveTrainLeft = 0.0;
     
-	public static final double kMaxSpeedMetersPerSecond = 0.0;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 0.0;
-    
-	public static double kRamseteB = 0.0;
-	public static double kRamseteZeta = 0.0;
+        public static final double kPDriveTrainRight = kPDriveTrainLeft;
+        public static final double kIDriveTrainRight = kIDriveTrainLeft;
+        public static final double kDDriveTrainRight = kDDriveTrainLeft;
+
+
+        //Drive Train Autonomus
+        public static class Autonomus{
+            public static final double ksVolts = 0.0;
+            public static final double kvVoltSecondsPerMeter = 0.0;
+            public static final double kTrackwidthMeters = 0.69;
+            public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+            public static final double kaVoltSecondsSquaredPerMeter = 0.0;
+            
+            public static final double kMaxSpeedMetersPerSecond = 0.0;
+            public static final double kMaxAccelerationMetersPerSecondSquared = 0.0;
+            
+            public static double kRamseteB = 0.0;
+            public static double kRamseteZeta = 0.0;
+        }
+    }
 
     //Joystick
-    public static final double kDriverJoystickDeadzone = 0.12;
+    public static class Joystick{
+        public static final double kDriverJoystickDeadzone = 0.12;
+    }
+
 
 }

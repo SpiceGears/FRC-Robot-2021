@@ -15,34 +15,18 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
-import frc.robot.Robot;
 import frc.robot.controllers.PIDcontroller;
 
 public class DriveTrain extends SubsystemBase {
   /** Creates a new DriveTrain. */
 
-  final Constants constants;
   final PortMap portMap;
   final PIDcontroller pidController;
 
@@ -50,26 +34,19 @@ public class DriveTrain extends SubsystemBase {
   private WPI_VictorSPX leftSlaveDriveTrainFirst, leftSlaveDriveTrainSecond, rightSlaveDriveTrainFirst, rightSlaveDriveTrainSecond;
 
   public DriveTrain() {
-    constants = new Constants();
     pidController = new PIDcontroller();
     portMap = new PortMap();
-    // setDefaultCommand(new teleopDrive());
     configurateMotors();
   }
 
-//   public void initDefaultCommand() {
-//     // Set the default command for a subsystem here.
-//     setDefaultCommand(new teleopDrive());
-// }
-
   private void configurateMotors(){
-    leftMasterDriveTrain = new WPI_TalonSRX(portMap.kLeftMasterDrive);
-    leftSlaveDriveTrainFirst = new WPI_VictorSPX(portMap.kLeftSlaveBDrive);
-    leftSlaveDriveTrainSecond = new WPI_VictorSPX(portMap.kLeftSlaveMDrive);
+    leftMasterDriveTrain = new WPI_TalonSRX(PortMap.DriveTrain.kLeftMasterDrive);
+    leftSlaveDriveTrainFirst = new WPI_VictorSPX(PortMap.DriveTrain.kLeftSlaveBDrive);
+    leftSlaveDriveTrainSecond = new WPI_VictorSPX(PortMap.DriveTrain.kLeftSlaveMDrive);
 
-    rightMasterDriveTrain = new WPI_TalonSRX(portMap.kRightMasterDrive);
-    rightSlaveDriveTrainFirst = new WPI_VictorSPX(portMap.kRightSlaveBDrive);
-    rightSlaveDriveTrainSecond = new WPI_VictorSPX(portMap.kRightSlaveMDrive);
+    rightMasterDriveTrain = new WPI_TalonSRX(PortMap.DriveTrain.kRightMasterDrive);
+    rightSlaveDriveTrainFirst = new WPI_VictorSPX(PortMap.DriveTrain.kRightSlaveBDrive);
+    rightSlaveDriveTrainSecond = new WPI_VictorSPX(PortMap.DriveTrain.kRightSlaveMDrive);
 
     configLeftMaster(leftMasterDriveTrain);
     configRightMaster(rightMasterDriveTrain);
@@ -85,9 +62,9 @@ public class DriveTrain extends SubsystemBase {
 
     configureMaster(talon, false);
   
-    talon.config_kP(Constants.kPIDLoopIdx, Constants.kPDriveTrainLeft, Constants.kTimeoutMs);
-    talon.config_kI(Constants.kPIDLoopIdx, Constants.kIDriveTrainLeft, Constants.kTimeoutMs);
-    talon.config_kD(Constants.kPIDLoopIdx, Constants.kDDriveTrainLeft, Constants.kTimeoutMs);
+    talon.config_kP(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kPDriveTrainLeft, Constants.Talon.kTimeoutMs);
+    talon.config_kI(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kIDriveTrainLeft, Constants.Talon.kTimeoutMs);
+    talon.config_kD(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kDDriveTrainLeft, Constants.Talon.kTimeoutMs);
 
   }
 
@@ -96,9 +73,9 @@ public class DriveTrain extends SubsystemBase {
 
     configureMaster(talon, false);
 
-    talon.config_kP(Constants.kPIDLoopIdx, Constants.kPDriveTrainRight, Constants.kTimeoutMs);
-    talon.config_kI(Constants.kPIDLoopIdx, Constants.kIDriveTrainRight, Constants.kTimeoutMs);
-    talon.config_kD(Constants.kPIDLoopIdx, Constants.kDDriveTrainRight, Constants.kTimeoutMs);
+    talon.config_kP(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kPDriveTrainRight, Constants.Talon.kTimeoutMs);
+    talon.config_kI(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kIDriveTrainRight, Constants.Talon.kTimeoutMs);
+    talon.config_kD(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kDDriveTrainRight, Constants.Talon.kTimeoutMs);
   }
 
   private void configureMaster(WPI_TalonSRX talon, boolean invert){
@@ -112,15 +89,38 @@ public class DriveTrain extends SubsystemBase {
     //talon.setInverted();
     talon.setSensorPhase(true);
     talon.enableVoltageCompensation(true);
-    talon.configVoltageCompSaturation(12.0, constants.kLongCANTimeoutMs);
-    talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, constants.kLongCANTimeoutMs); 
-    talon.configVelocityMeasurementWindow(1, constants.kLongCANTimeoutMs); 
-    talon.configClosedloopRamp(constants.kDriveVoltageRampRate, constants.kLongCANTimeoutMs); 
+    talon.configVoltageCompSaturation(12.0, Constants.Talon.kLongCANTimeoutMs);
+    talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.Talon.kLongCANTimeoutMs); 
+    talon.configVelocityMeasurementWindow(1, Constants.Talon.kLongCANTimeoutMs); 
+    talon.configClosedloopRamp(Constants.Talon.kDriveVoltageRampRate, Constants.Talon.kLongCANTimeoutMs); 
     talon.configNeutralDeadband(0.04, 0);
   }
  
   private double leftWheelOutputWithTurn = 0;
   private double rightWheelOutputWithTurn = 0;
+
+  /**
+   * 
+   * @param leftPercentageOutput left master robot speed percentage.
+   * @param rightPercentageOutput right master robot speed percentage.
+   * @param turn robot turn value.
+   * @return calcuteted wheel speed with turn where [0] is left wheel and [1] is right wheel
+   */
+  private double[] getLeftWheelOutputWithTurn(double leftPercentageOutput, double rightPercentageOutput, double turn){
+    double[] wheelOutputWithTurn = new double[1];
+
+    if(Math.abs(leftPercentageOutput) + turn >= 1){
+      wheelOutputWithTurn[0] = leftPercentageOutput;
+      wheelOutputWithTurn[1] = -rightPercentageOutput + turn * 2;
+    }else if(Math.abs(rightPercentageOutput) + turn >= 1){
+      wheelOutputWithTurn[0] = leftPercentageOutput;
+      wheelOutputWithTurn[1] = -rightPercentageOutput + turn * 2;
+    }else{
+      wheelOutputWithTurn[0] = leftPercentageOutput + turn;
+      wheelOutputWithTurn[1] = rightPercentageOutput - turn;
+    }
+    return wheelOutputWithTurn;
+  }
 
   /**
    * Sets robot velocity based on percentage output.
@@ -132,39 +132,25 @@ public class DriveTrain extends SubsystemBase {
    */
 
   public void setSpeedDriveTrainVelocityOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
-    if(Math.abs(leftPercentageOutput) + turn >= 1){
-      rightWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
-      leftWheelOutputWithTurn = leftPercentageOutput;
-    }else if(Math.abs(rightPercentageOutput) + turn >= 1){
-      rightWheelOutputWithTurn = leftPercentageOutput;
-      leftWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
-    }else{
-      rightWheelOutputWithTurn = leftPercentageOutput + turn;
-      leftWheelOutputWithTurn = rightPercentageOutput - turn;
-    }
-
-    leftMasterDriveTrain.set(ControlMode.Velocity, leftWheelOutputWithTurn * 10000.0 * 4096 / 600);   // ustawia max 500 RPM
-
-    // rightMasterDriveTrain.set(ControlMode.Velocity, 0);
-    rightMasterDriveTrain.set(ControlMode.Velocity, -rightWheelOutputWithTurn * 10000.0 * 4096 / 600);// ustawia max 500 RPM
+    /**
+     * param 2 =  PercentOutput * maxVelocity(RRM) * ticks / ?
+     */
+    leftMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0] * 10000.0 * 4096 / 600);
+    rightMasterDriveTrain.set(ControlMode.Velocity, -getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1] * 10000.0 * 4096 / 600);
   }
 
+  /**
+   * Sets robot velocity based on percentage output.
+   * ControlMode.Velocity
+   * 
+   * @param leftPercentageOutput left master robot speed percentage.
+   * @param rightPercentageOutput right master robot speed percentage.
+   * @param turn robot turn value.
+   */
+
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
-    if(Math.abs(leftPercentageOutput) + turn >= 1){
-      rightWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
-      leftWheelOutputWithTurn = leftPercentageOutput;
-    }else if(Math.abs(rightPercentageOutput) + turn >= 1){
-      rightWheelOutputWithTurn = leftPercentageOutput;
-      leftWheelOutputWithTurn = -rightPercentageOutput + turn * 2;
-    }else{
-      rightWheelOutputWithTurn = leftPercentageOutput;
-      leftWheelOutputWithTurn = rightPercentageOutput;
-    }
-    
-    leftMasterDriveTrain.set(ControlMode.PercentOutput, leftWheelOutputWithTurn);
-    rightMasterDriveTrain.set(ControlMode.PercentOutput, -rightWheelOutputWithTurn);
-    // leftMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
-    // rightMasterDriveTrain.set(ControlMode.PercentOutput, pidController.calculatePID(kP, error, kI, errorSum, kD, deltaError, deltaTime));
+    leftMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0]);
+    rightMasterDriveTrain.set(ControlMode.PercentOutput, -getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1]);
   }
 
   public void stopDriveTrainMotors(){
@@ -182,31 +168,40 @@ public class DriveTrain extends SubsystemBase {
    */
 
   public double getLeftMasterVelocityMpS(){
-    return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
+    return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticks per rotation - 4096
   }
 
    /**
    * @return wheels speed in m/s
    */
   public double getRightMasterVelocityMpS(){
-    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticki na obrót 4096
+    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticks per rotation - 4096
   }
 
-  public double getMaxLeftMasterVelocityTickPer100ms(){ // tick/100ms
+  /**
+   * 
+   * @return left wheel tick per 100ms.
+   */
+  public double getMaxLeftMasterVelocityTickPer100ms(){
     return leftMasterDriveTrain.getSelectedSensorVelocity();
   }
+
+  /**
+   * 
+   * @return wheel circuit.
+   */
 
   public double getWheelCircuit(){
     return Math.PI * 0.2032;
   }
 
-  /**
-   * ---------------------------------------------
-   * ----------------=============----------------
-   * ---------------=  Autonomus  =---------------
-   * ----------------=============----------------
-   * ---------------------------------------------
-   *  */
+  
+  // ---------------------------------------------
+  // ----------------=============----------------
+  // ---------------=  Autonomus  =---------------
+  // ----------------=============----------------
+  // ---------------------------------------------
+
 
   private DifferentialDrive diffDrive;
   private AHRS  gyro;
@@ -215,7 +210,7 @@ public class DriveTrain extends SubsystemBase {
 
   public void autonomousInit(){
     resetEncodersDriveTrain();
-    gyro = new AHRS(portMap.gyroPort);
+    gyro = new AHRS(PortMap.DriveTrain.gyroPort);
     diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
 
     odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
@@ -261,7 +256,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return Left wheel distance in meters.
+   * @return Left wheel encoder distance in meters.
    */
 
   private double getLeftDistanceMeters(){
@@ -269,14 +264,12 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return Right wheel distance in meters.
+   * @return Right wheel encoder distance in meters.
    */
 
   private double getRightMasterDistanceMeters(){
     return getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
   }
-
-  
 
   @Override
   public void periodic() {

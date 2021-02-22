@@ -44,7 +44,9 @@ public class teleopDrive extends CommandBase {
   }
 
   private void joystickRun(){
-    if(Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) >= constants.kDriverJoystickDeadzone || Math.abs(Robot.oI.getDriverJoy().getRawAxis(4)) > constants.kDriverJoystickDeadzone){
+    if(Math.abs(Robot.oI.getDriverJoy().getRawAxis(1)) >= Constants.Joystick.kDriverJoystickDeadzone || 
+          Math.abs(Robot.oI.getDriverJoy().getRawAxis(4)) > Constants.Joystick.kDriverJoystickDeadzone){
+            
       robotVelocity = Robot.oI.getDriverJoy().getRawAxis(1);
       robotTurn = Robot.oI.getDriverJoy().getRawAxis(4);
       driveTrain.setSpeedDriveTrainVelocityOutput(robotVelocity, robotVelocity, robotTurn / 1.1);

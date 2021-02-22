@@ -24,7 +24,7 @@ import java.nio.file.Path;
 /** Add your docs here. */
 public class DriveTrainAuto {
 
-    private final DriveTrain m_drive = new DriveTrain();
+    private final DriveTrain driveTrain = new DriveTrain();
 
     public Command getAutonomousCommand() {
 
@@ -38,22 +38,22 @@ public class DriveTrainAuto {
         }
 
         // Create a voltage constraint to ensure we don't accelerate too fast
-        var autoVoltageConstraint =
-            new DifferentialDriveVoltageConstraint(
-                new SimpleMotorFeedforward(Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-                Constants.kDriveKinematics,
-                10);
+        // var autoVoltageConstraint =
+        //     new DifferentialDriveVoltageConstraint(
+        //         new SimpleMotorFeedforward(Constants.DriveTrain.Autonomus.ksVolts,
+        //         Constants.DriveTrain.Autonomus.kvVoltSecondsPerMeter,
+        //         Constants.DriveTrain.Autonomus.kaVoltSecondsSquaredPerMeter),
+        //         Constants.DriveTrain.Autonomus.kDriveKinematics,
+        //         10);
     
         // Create config for trajectory
-        TrajectoryConfig config =
-            new TrajectoryConfig(Constants.kMaxSpeedMetersPerSecond,
-            Constants.kMaxAccelerationMetersPerSecondSquared)
-                // Add kinematics to ensure max speed is actually obeyed
-                .setKinematics(Constants.kDriveKinematics)
-                // Apply the voltage constraint
-                .addConstraint(autoVoltageConstraint);
+        // TrajectoryConfig config =
+        //     new TrajectoryConfig(Constants.DriveTrain.Autonomus.kMaxSpeedMetersPerSecond,
+        //     Constants.DriveTrain.Autonomus.kMaxAccelerationMetersPerSecondSquared)
+        //         // Add kinematics to ensure max speed is actually obeyed
+        //         .setKinematics(Constants.DriveTrain.Autonomus.kDriveKinematics)
+        //         // Apply the voltage constraint
+        //         .addConstraint(autoVoltageConstraint);
     
         // // An example trajectory to follow.  All units in meters.d
         //     new Pose2d(0, 0, new Rotation2d(0)),
@@ -71,25 +71,25 @@ public class DriveTrainAuto {
         RamseteCommand ramseteCommand =
         new RamseteCommand(
             trajectory,
-            m_drive ::getPose,
-            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
+            driveTrain::getPose,
+            new RamseteController(Constants.DriveTrain.Autonomus.kRamseteB, Constants.DriveTrain.Autonomus.kRamseteZeta),
             new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
+                Constants.DriveTrain.Autonomus.ksVolts,
+                Constants.DriveTrain.Autonomus.kvVoltSecondsPerMeter,
+                Constants.DriveTrain.Autonomus.kaVoltSecondsSquaredPerMeter),
+                Constants.DriveTrain.Autonomus.kDriveKinematics,
             Robot.driveTrain::getWheelSpeeds,
-            new PIDController(Constants.kPDriveTrainLeft, 0, 0),
-            new PIDController(Constants.kPDriveTrainRight, 0, 0),
+            new PIDController(Constants.DriveTrain.kPDriveTrainLeft, 0, 0),
+            new PIDController(Constants.DriveTrain.kPDriveTrainRight, 0, 0),
             // RamseteCommand passes volts to the callback
-            m_drive::driveDriveTrainByVoltage,
-            m_drive);
+            driveTrain::driveDriveTrainByVoltage,
+            driveTrain);
     
         // Reset odometry to the starting pose of the trajectory.
         Robot.driveTrain.resetOdometry(trajectory.getInitialPose());
 
         // Run path following command, then stop at the end.
-        return ramseteCommand.andThen(() -> m_drive.driveDriveTrainByVoltage(0, 0));
+        return ramseteCommand.andThen(() -> driveTrain.driveDriveTrainByVoltage(0, 0));
     }
 
 }
