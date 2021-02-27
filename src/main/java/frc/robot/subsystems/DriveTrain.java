@@ -14,10 +14,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -32,14 +35,22 @@ public class DriveTrain extends SubsystemBase {
   final PortMap portMap;
   final PIDcontroller pidController;
 
+  private DifferentialDrive diffDrive;
+  private AHRS gyro;
+
   public WPI_TalonSRX leftMasterDriveTrain, rightMasterDriveTrain;
   private WPI_VictorSPX leftSlaveDriveTrainFirst, leftSlaveDriveTrainSecond, rightSlaveDriveTrainFirst, rightSlaveDriveTrainSecond;
 
   public DriveTrain() {
     pidController = new PIDcontroller();
     portMap = new PortMap();
+    
+    gyro = new AHRS(PortMap.DriveTrain.gyroPort);
+
     configurateMotors();
 
+    diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
+    
     autonomousInit();
   }
 
@@ -55,12 +66,16 @@ public class DriveTrain extends SubsystemBase {
     configLeftMaster(leftMasterDriveTrain);
     configRightMaster(rightMasterDriveTrain);
     
+    leftMasterDriveTrain.setInverted(true);
+    leftSlaveDriveTrainFirst.setInverted(true);
+    leftSlaveDriveTrainSecond.setInverted(true);
+
     leftSlaveDriveTrainFirst.follow(leftMasterDriveTrain);
     leftSlaveDriveTrainSecond.follow(leftMasterDriveTrain);
     rightSlaveDriveTrainFirst.follow(rightMasterDriveTrain);
     rightSlaveDriveTrainSecond.follow(rightMasterDriveTrain);
 
-
+    
   }
 
   private void configLeftMaster(WPI_TalonSRX talon){
@@ -95,9 +110,8 @@ public class DriveTrain extends SubsystemBase {
         DriverStation.reportError("Could not detect " + (invert ? "right" : "left") + " encoder: " + sensorPresent, false);
     }
 
-    //talon.setInverted();
-    talon.setSensorPhase(true);
-    talon.enableVoltageCompensation(false);
+    // talon.setInverted(invert);
+    talon.setSensorPhase(invert);
     talon.configVoltageCompSaturation(12.0, Constants.Talon.kLongCANTimeoutMs);
     talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.Talon.kLongCANTimeoutMs); 
     talon.configVelocityMeasurementWindow(1, Constants.Talon.kLongCANTimeoutMs); 
@@ -142,7 +156,7 @@ public class DriveTrain extends SubsystemBase {
      * param 2 =  PercentOutput * maxVelocity(RRM) * ticks / ?
      */
     leftMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0] * 10000.0 * 4096 / 600);
-    rightMasterDriveTrain.set(ControlMode.Velocity, -getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1] * 10000.0 * 4096 / 600);
+    rightMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1] * 10000.0 * 4096 / 600);
   }
 
   /**
@@ -155,8 +169,10 @@ public class DriveTrain extends SubsystemBase {
    */
 
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
-    leftMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0]);
-    rightMasterDriveTrain.set(ControlMode.PercentOutput, -getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1]);
+    // leftMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0]);
+    // rightMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1]);
+    leftMasterDriveTrain.set(ControlMode.PercentOutput, leftPercentageOutput - turn);
+    rightMasterDriveTrain.set(ControlMode.PercentOutput, leftPercentageOutput + turn);
   }
 
   public void stopDriveTrainMotors(){
@@ -194,16 +210,16 @@ public class DriveTrain extends SubsystemBase {
   // ---------------------------------------------
 
 
-  private DifferentialDrive diffDrive;
-  private AHRS  gyro;
+  // private Gyro gyro = new ADXRS450_Gyro();
   private DifferentialDriveOdometry odometry;
   // DriveTrainAuto driveTrainAuto;
-  
+  // int x = true?1:-1;
+  int invert_gyro = -1;
+  int invert_enc = 1;
+  int invert_speed = 1;
 
   public void autonomousInit(){
     resetEncodersDriveTrain();
-    gyro = new AHRS(PortMap.DriveTrain.gyroPort);
-    diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
     resetGyro();
 
     odometry = new DifferentialDriveOdometry(getHeading());
@@ -221,18 +237,18 @@ public class DriveTrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(getLeftMasterVelocityMpS(), getRightMasterVelocityMpS());
   }
 
-  public void resetOdometry(Pose2d pose) {
+  public void resetOdometry(Pose2d pose) {   
     resetEncodersDriveTrain();
     odometry.resetPosition(pose, getHeading());
   }
 
   public void driveDriveTrainByVoltage(double leftVolts, double rightVolts){
-    leftMasterDriveTrain.setVoltage(-leftVolts);
-    rightMasterDriveTrain.setVoltage(rightVolts);
+    leftMasterDriveTrain.setVoltage(invert_speed*leftVolts);
+    rightMasterDriveTrain.setVoltage(invert_speed*rightVolts);
     diffDrive.feed();
-    SmartDashboard.putNumber("leftVolts", -leftVolts);
-    SmartDashboard.putNumber("rightVolts", rightVolts);
-    // leftMasterDriveTrain.set(ControlMode.PercentOutput, -leftVolts/12);
+    SmartDashboard.putNumber("leftVolts", invert_speed*leftVolts);
+    SmartDashboard.putNumber("rightVolts", invert_speed*rightVolts);
+    // leftMasterDriveTrain.set(ControlMode.PercentOutput, leftVolts/12);
     // rightMasterDriveTrain.set(ControlMode.PercentOutput, rightVolts/12);
 
   }
@@ -246,19 +262,19 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public Rotation2d getHeading() {
-    return Rotation2d.fromDegrees(-gyro.getAngle());
+    return Rotation2d.fromDegrees(invert_gyro*gyro.getAngle());
   }
 
-  public double getTurnRate() {
-    return gyro.getRate();
-  }
+  // public double getTurnRate() {
+  //   return -gyro.getRate();
+  // }
 
   /**
    * @return Left wheel encoder distance in meters.
    */
 
   private double getLeftDistanceMeters(){
-    return getWheelCircuit() * leftMasterDriveTrain.getSelectedSensorPosition()/4096;
+    return invert_enc*getWheelCircuit() * leftMasterDriveTrain.getSelectedSensorPosition()/4096;
   }
 
   /**
@@ -266,7 +282,7 @@ public class DriveTrain extends SubsystemBase {
    */
 
   private double getRightDistanceMeters(){
-    return -getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
+    return invert_enc*getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
   }
 
     /**
@@ -274,14 +290,14 @@ public class DriveTrain extends SubsystemBase {
    */
 
   public double getLeftMasterVelocityMpS(){
-    return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
+    return invert_enc*getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
   }
 
    /**
    * @return wheels speed in m/s
    */
   public double getRightMasterVelocityMpS(){
-    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
+    return invert_enc*getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
   }
 
   @Override
@@ -298,5 +314,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("getHeading().getDegrees()", getHeading().getDegrees());
     SmartDashboard.putNumber("getLeftMasterVelocityMpS()", getLeftMasterVelocityMpS());
     SmartDashboard.putNumber("getRightMasterVelocityMpS()", getRightMasterVelocityMpS());
+    SmartDashboard.putNumber("odometry.getPoseMeters()()", odometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("odometry Rotation", odometry.getPoseMeters().getRotation().getDegrees());
   }
 }

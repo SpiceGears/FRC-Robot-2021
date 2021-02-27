@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -41,12 +42,14 @@ import java.util.List;
  */
 public class RobotContainer {
   // The robot's subsystems
-  private final DriveTrain m_robotDrive = new DriveTrain();
+  public final DriveTrain m_robotDrive = new DriveTrain();
 
   private final Command balonAuto = getAutonomousCommandFromPath("balon");
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
 
-  SendableChooser<Command> m_chooser = new SendableChooser<>();
+  SendableChooser<String> m_chooser = new SendableChooser<>();
+  
+  XboxController m_driverController = new XboxController(0);
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -54,9 +57,9 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
 
-    m_chooser.setDefaultOption("none Auto", null);
-    m_chooser.addOption("balon Auto", balonAuto);
-    m_chooser.addOption("prosto3m Auto", prosto3mAuto);
+    m_chooser.setDefaultOption("none Auto", "null");
+    m_chooser.addOption("balon Auto", "balonAuto");
+    m_chooser.addOption("prosto3m Auto", "prosto3mAuto");
 
     SmartDashboard.putData(m_chooser);
 
@@ -67,7 +70,13 @@ public class RobotContainer {
         // hand, and turning controlled by the right.
         new RunCommand(
             () ->
-                m_robotDrive.driveDriveTrainByVoltage(0.0, 0.0),
+                m_robotDrive.setSpeedDriveTrainPercentOutput(
+                    -m_driverController.getRawAxis(1)/1,
+                    -m_driverController.getRawAxis(1)/1,
+                    -m_driverController.getRawAxis(4)/3),
+                    // m_driverController.getX(GenericHID.Hand.kRight)/3),
+                    // m_driverController.getX(GenericHID.Hand.kRight)/3),
+
             m_robotDrive));
   }
 
@@ -89,6 +98,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
+
 
   /**
    * 
@@ -116,6 +126,7 @@ public Command getAutonomousCommandFromPath(String fileName) {
     //     new Pose2d(2, 0, new Rotation2d(0)),
     //     // Pass config
     //     config);
+
 
 
         RamseteCommand ramseteCommand =
@@ -150,7 +161,7 @@ public Command getAutonomousCommandFromPath(String fileName) {
         return ramseteCommand.andThen(() -> m_robotDrive.driveDriveTrainByVoltage(0, 0));
     }
 
-    public Command getSelectedAutonomousCommand() {
+    public String getSelectedAutonomous() {
         return m_chooser.getSelected();
     }
 }
