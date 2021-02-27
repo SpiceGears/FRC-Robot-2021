@@ -32,7 +32,7 @@ public final class Constants {
     
     //Drive Train
     public static class DriveTrain{
-        public static final double kPDriveTrainLeft = 2.42; // 2.42; //0.04;
+        public static final double kPDriveTrainLeft = 2.0; // 2.42; //0.04; (2.42 - tuner)
         public static final double kIDriveTrainLeft = 0.0;
         public static final double kDDriveTrainLeft = 0.0;
     
@@ -53,8 +53,8 @@ public final class Constants {
             public static final double kMaxSpeedMetersPerSecond = 0.5;
             public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
             
-            public static double kRamseteB = 2.07;//*18;
-            public static double kRamseteZeta = 0.7;//*0.1;
+            public static double kRamseteB = 2.07 * 4; //8.0;
+            public static double kRamseteZeta = 0.7 * 0.2;//*0.1;
         }
     }
 

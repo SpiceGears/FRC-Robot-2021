@@ -155,8 +155,13 @@ public class DriveTrain extends SubsystemBase {
     /**
      * param 2 =  PercentOutput * maxVelocity(RRM) * ticks / ?
      */
-    leftMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0] * 10000.0 * 4096 / 600);
-    rightMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1] * 10000.0 * 4096 / 600);
+
+    leftMasterDriveTrain.set(ControlMode.Velocity, leftPercentageOutput - turn * 10000.0 * 4096 / 600);
+    rightMasterDriveTrain.set(ControlMode.Velocity, leftPercentageOutput + turn * 10000.0 * 4096 / 600);
+  
+
+    // leftMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0] * 10000.0 * 4096 / 600);
+    // rightMasterDriveTrain.set(ControlMode.Velocity, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1] * 10000.0 * 4096 / 600);
   }
 
   /**
@@ -171,8 +176,8 @@ public class DriveTrain extends SubsystemBase {
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
     // leftMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0]);
     // rightMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1]);
-    leftMasterDriveTrain.set(ControlMode.PercentOutput, leftPercentageOutput - turn);
-    rightMasterDriveTrain.set(ControlMode.PercentOutput, leftPercentageOutput + turn);
+    leftMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 3) - turn);
+    rightMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 3) + turn);
   }
 
   public void stopDriveTrainMotors(){

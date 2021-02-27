@@ -60,6 +60,8 @@ public class RobotContainer {
     m_chooser.setDefaultOption("none Auto", "null");
     m_chooser.addOption("balon Auto", "balonAuto");
     m_chooser.addOption("prosto3m Auto", "prosto3mAuto");
+    m_chooser.addOption("koloR2m Auto", "koloR2m");
+    m_chooser.addOption("barrel Auto", "barrel");
 
     SmartDashboard.putData(m_chooser);
 
@@ -71,9 +73,9 @@ public class RobotContainer {
         new RunCommand(
             () ->
                 m_robotDrive.setSpeedDriveTrainPercentOutput(
-                    -m_driverController.getRawAxis(1)/1,
-                    -m_driverController.getRawAxis(1)/1,
-                    -m_driverController.getRawAxis(4)/3),
+                    -m_driverController.getRawAxis(1),
+                    -m_driverController.getRawAxis(1),
+                    -m_driverController.getRawAxis(4) / 2),
                     // m_driverController.getX(GenericHID.Hand.kRight)/3),
                     // m_driverController.getX(GenericHID.Hand.kRight)/3),
 

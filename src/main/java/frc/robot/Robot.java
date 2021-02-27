@@ -92,6 +92,12 @@ public class Robot extends TimedRobot {
       case "prosto3mAuto":
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("prosto3m");
         break;
+      case "koloR2m":
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("koloR2m");
+                break;
+      case "barrel":
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("barrel");
+                break;
       default:
         break;
     }
