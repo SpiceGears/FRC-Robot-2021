@@ -17,8 +17,10 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;                 
 import frc.robot.PortMap;
@@ -37,6 +39,8 @@ public class DriveTrain extends SubsystemBase {
     pidController = new PIDcontroller();
     portMap = new PortMap();
     configurateMotors();
+
+    autonomousInit();
   }
 
   private void configurateMotors(){
@@ -55,6 +59,8 @@ public class DriveTrain extends SubsystemBase {
     leftSlaveDriveTrainSecond.follow(leftMasterDriveTrain);
     rightSlaveDriveTrainFirst.follow(rightMasterDriveTrain);
     rightSlaveDriveTrainSecond.follow(rightMasterDriveTrain);
+
+
   }
 
   private void configLeftMaster(WPI_TalonSRX talon){
@@ -65,7 +71,8 @@ public class DriveTrain extends SubsystemBase {
     talon.config_kP(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kPDriveTrainLeft, Constants.Talon.kTimeoutMs);
     talon.config_kI(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kIDriveTrainLeft, Constants.Talon.kTimeoutMs);
     talon.config_kD(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kDDriveTrainLeft, Constants.Talon.kTimeoutMs);
-
+    
+    talon.enableVoltageCompensation(false);
   }
 
   private void configRightMaster(WPI_TalonSRX talon){
@@ -76,6 +83,8 @@ public class DriveTrain extends SubsystemBase {
     talon.config_kP(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kPDriveTrainRight, Constants.Talon.kTimeoutMs);
     talon.config_kI(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kIDriveTrainRight, Constants.Talon.kTimeoutMs);
     talon.config_kD(Constants.Talon.kPIDLoopIdx, Constants.DriveTrain.kDDriveTrainRight, Constants.Talon.kTimeoutMs);
+  
+    talon.enableVoltageCompensation(false);
   }
 
   private void configureMaster(WPI_TalonSRX talon, boolean invert){
@@ -88,16 +97,13 @@ public class DriveTrain extends SubsystemBase {
 
     //talon.setInverted();
     talon.setSensorPhase(true);
-    talon.enableVoltageCompensation(true);
+    talon.enableVoltageCompensation(false);
     talon.configVoltageCompSaturation(12.0, Constants.Talon.kLongCANTimeoutMs);
     talon.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_50Ms, Constants.Talon.kLongCANTimeoutMs); 
     talon.configVelocityMeasurementWindow(1, Constants.Talon.kLongCANTimeoutMs); 
     talon.configClosedloopRamp(Constants.Talon.kDriveVoltageRampRate, Constants.Talon.kLongCANTimeoutMs); 
     talon.configNeutralDeadband(0.04, 0);
   }
- 
-  private double leftWheelOutputWithTurn = 0;
-  private double rightWheelOutputWithTurn = 0;
 
   /**
    * 
@@ -164,21 +170,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return wheels speed in m/s
-   */
-
-  public double getLeftMasterVelocityMpS(){
-    return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticks per rotation - 4096
-  }
-
-   /**
-   * @return wheels speed in m/s
-   */
-  public double getRightMasterVelocityMpS(){
-    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096 * 10);  // ticks per rotation - 4096
-  }
-
-  /**
    * 
    * @return left wheel tick per 100ms.
    */
@@ -192,7 +183,7 @@ public class DriveTrain extends SubsystemBase {
    */
 
   public double getWheelCircuit(){
-    return Math.PI * 0.2032;
+    return Math.PI * Constants.DriveTrain.wheelLenght;
   }
 
   
@@ -206,20 +197,21 @@ public class DriveTrain extends SubsystemBase {
   private DifferentialDrive diffDrive;
   private AHRS  gyro;
   private DifferentialDriveOdometry odometry;
+  // DriveTrainAuto driveTrainAuto;
   
 
   public void autonomousInit(){
     resetEncodersDriveTrain();
     gyro = new AHRS(PortMap.DriveTrain.gyroPort);
     diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
+    resetGyro();
 
-    odometry = new DifferentialDriveOdometry(gyro.getRotation2d());
+    odometry = new DifferentialDriveOdometry(getHeading());
+    // driveTrainAuto = new DriveTrainAuto();
+
+    // driveTrainAuto.getAutonomousCommand();
   }
 
-  public void autonomusPerodoic(){
-    odometry.update(gyro.getRotation2d(), leftMasterDriveTrain.getSelectedSensorPosition(),
-        rightMasterDriveTrain.getSelectedSensorPosition());
-  }
 
   public Pose2d getPose() {
     return odometry.getPoseMeters();
@@ -231,28 +223,34 @@ public class DriveTrain extends SubsystemBase {
 
   public void resetOdometry(Pose2d pose) {
     resetEncodersDriveTrain();
-    odometry.resetPosition(pose, gyro.getRotation2d());
+    odometry.resetPosition(pose, getHeading());
   }
 
   public void driveDriveTrainByVoltage(double leftVolts, double rightVolts){
-    leftMasterDriveTrain.setVoltage(leftVolts);
-    rightMasterDriveTrain.setVoltage(-rightVolts);
+    leftMasterDriveTrain.setVoltage(-leftVolts);
+    rightMasterDriveTrain.setVoltage(rightVolts);
+    diffDrive.feed();
+    SmartDashboard.putNumber("leftVolts", -leftVolts);
+    SmartDashboard.putNumber("rightVolts", rightVolts);
+    // leftMasterDriveTrain.set(ControlMode.PercentOutput, -leftVolts/12);
+    // rightMasterDriveTrain.set(ControlMode.PercentOutput, rightVolts/12);
+
   }
 
   public double getAverageEncoderDistance() {
-    return (getLeftDistanceMeters() + getRightMasterDistanceMeters()) / 2.0;
+    return (getLeftDistanceMeters() + getRightDistanceMeters()) / 2.0;
   }
 
   public void resetGyro(){
     gyro.reset();
   }
 
-  public double getHeading() {
-    return gyro.getRotation2d().getDegrees();
+  public Rotation2d getHeading() {
+    return Rotation2d.fromDegrees(-gyro.getAngle());
   }
 
   public double getTurnRate() {
-    return -gyro.getRate();
+    return gyro.getRate();
   }
 
   /**
@@ -267,12 +265,38 @@ public class DriveTrain extends SubsystemBase {
    * @return Right wheel encoder distance in meters.
    */
 
-  private double getRightMasterDistanceMeters(){
-    return getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
+  private double getRightDistanceMeters(){
+    return -getWheelCircuit() * rightMasterDriveTrain.getSelectedSensorPosition()/4096;
+  }
+
+    /**
+   * @return wheels speed in m/s
+   */
+
+  public double getLeftMasterVelocityMpS(){
+    return getWheelCircuit() * (leftMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
+  }
+
+   /**
+   * @return wheels speed in m/s
+   */
+  public double getRightMasterVelocityMpS(){
+    return -getWheelCircuit() * (rightMasterDriveTrain.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    logToSmartDashboard();
+    odometry.update(getHeading(), getLeftDistanceMeters(), getRightDistanceMeters());
+  }
+
+  public void logToSmartDashboard(){
+    SmartDashboard.putNumber("getLeftDistanceMeters", getLeftDistanceMeters());
+    SmartDashboard.putNumber("getRightDistanceMeters", getRightDistanceMeters());
+    SmartDashboard.putNumber("getAverageEncoderDistance", getAverageEncoderDistance());
+    SmartDashboard.putNumber("getHeading().getDegrees()", getHeading().getDegrees());
+    SmartDashboard.putNumber("getLeftMasterVelocityMpS()", getLeftMasterVelocityMpS());
+    SmartDashboard.putNumber("getRightMasterVelocityMpS()", getRightMasterVelocityMpS());
   }
 }

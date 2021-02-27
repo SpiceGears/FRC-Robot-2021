@@ -30,10 +30,9 @@ public final class Constants {
         public static final int kTimeoutMs = 30;
     }
     
-
     //Drive Train
     public static class DriveTrain{
-        public static final double kPDriveTrainLeft = 0.005;
+        public static final double kPDriveTrainLeft = 2.42; // 2.42; //0.04;
         public static final double kIDriveTrainLeft = 0.0;
         public static final double kDDriveTrainLeft = 0.0;
     
@@ -41,20 +40,21 @@ public final class Constants {
         public static final double kIDriveTrainRight = kIDriveTrainLeft;
         public static final double kDDriveTrainRight = kDDriveTrainLeft;
 
+        public static final double wheelLenght = 0.18; //0.2032; //wheelLenght
 
         //Drive Train Autonomus
         public static class Autonomus{
-            public static final double ksVolts = 0.0;
-            public static final double kvVoltSecondsPerMeter = 0.0;
-            public static final double kTrackwidthMeters = 0.69;
+            public static final double ksVolts = 1.31;//1.02;
+            public static final double kvVoltSecondsPerMeter = 2.39;// 1.39;
+            public static final double kTrackwidthMeters = 0.5;
             public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
-            public static final double kaVoltSecondsSquaredPerMeter = 0.0;
+            public static final double kaVoltSecondsSquaredPerMeter = 0.326; //0.383;
             
-            public static final double kMaxSpeedMetersPerSecond = 0.0;
-            public static final double kMaxAccelerationMetersPerSecondSquared = 0.0;
+            public static final double kMaxSpeedMetersPerSecond = 0.5;
+            public static final double kMaxAccelerationMetersPerSecondSquared = 0.2;
             
-            public static double kRamseteB = 0.0;
-            public static double kRamseteZeta = 0.0;
+            public static double kRamseteB = 2.07; //*13;
+            public static double kRamseteZeta = 0.7;//*0.07;
         }
     }
 
