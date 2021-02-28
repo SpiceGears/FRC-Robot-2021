@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Drive.teleopDrive;
+import frc.robot.commands.Drive.TeleopDrive;
 import frc.robot.subsystems.DriveTrain;
 // import frc.robot.subsystems.DriveTrainAuto;
 
@@ -136,9 +136,6 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
-    Compressor compressor = new Compressor(0);
-
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

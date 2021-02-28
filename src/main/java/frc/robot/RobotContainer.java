@@ -8,6 +8,7 @@ import static edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -29,8 +30,12 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Drive.AutoDrivePath;
+import frc.robot.commands.Intake.IntakeClose;
+import frc.robot.commands.Intake.IntakeOpen;
+import frc.robot.commands.Intake.IntakeRotate;
 // import frc.robot.Constants.DriveTrain;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Intake;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -45,9 +50,10 @@ import java.util.List;
 public class RobotContainer {
   // The robot's subsystems
   public final DriveTrain m_robotDrive = new DriveTrain();
-
   private final Command balonAuto = getAutonomousCommandFromPath("balon");
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
+
+  private final Intake m_intake = new Intake();
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
@@ -79,7 +85,7 @@ public class RobotContainer {
                 m_robotDrive.setSpeedDriveTrainPercentOutput(
                     -m_driverController.getRawAxis(1),
                     -m_driverController.getRawAxis(1),
-                    -m_driverController.getRawAxis(4) / 2),
+                    -m_driverController.getRawAxis(4) / Constants.Joysticks.driveTurnDivide),
                     // m_driverController.getX(GenericHID.Hand.kRight)/3),
                     // m_driverController.getX(GenericHID.Hand.kRight)/3),
 
@@ -93,11 +99,14 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    // Drive at half speed when the right bumper is held
-    // new JoystickButton(m_driverController, Button.kBumperRight.value)
-    //     .whenPressed(() -> m_robotDrive.setMaxOutput(0.5))
-    //     .whenReleased(() -> m_robotDrive.setMaxOutput(1));
-  }
+    JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
+    JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
+    JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
+    
+    intakeCloseButton.whenPressed(new IntakeClose(m_intake));
+    intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
+    intakeRotateButton.whileHeld(new IntakeRotate(m_intake));  
+}
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
