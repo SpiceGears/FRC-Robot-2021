@@ -170,7 +170,9 @@ public Command getAutonomousCommandFromPath(String fileName) {
     public SequentialCommandGroup complexAutoCommend(){
         return new SequentialCommandGroup(
             new AutoDrivePath(m_robotDrive, "bounce1"),
-            new AutoDrivePath(m_robotDrive, "bounce2")
+            new AutoDrivePath(m_robotDrive, "bounce2"),
+            new AutoDrivePath(m_robotDrive, "bounce3"),
+            new AutoDrivePath(m_robotDrive, "bounce4")
         );
     }
 
