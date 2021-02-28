@@ -1,9 +1,9 @@
 {
   "lengthUnit": "Meter",
   "exportUnit": "Always Meters",
-  "maxVelocity": 1.3,
-  "maxAcceleration": 0.25,
+  "maxVelocity": 1.21,
+  "maxAcceleration": 0.6,
   "wheelBase": 0.5,
-  "gameName": "Barrel Racing Path",
+  "gameName": "Slalom Path",
   "outputDir": "../../src/main/deploy/paths"
 }

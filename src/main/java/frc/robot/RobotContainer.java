@@ -62,6 +62,7 @@ public class RobotContainer {
     m_chooser.addOption("prosto3m Auto", "prosto3mAuto");
     m_chooser.addOption("koloR2m Auto", "koloR2m");
     m_chooser.addOption("barrel Auto", "barrel");
+    m_chooser.addOption("slalom Auto", "slalom");
 
     SmartDashboard.putData(m_chooser);
 

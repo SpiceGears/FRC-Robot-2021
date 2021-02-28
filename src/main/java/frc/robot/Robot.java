@@ -95,12 +95,16 @@ public class Robot extends TimedRobot {
       case "koloR2m":
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("koloR2m");
                 break;
-      case "barrel":
+      case "barrel": // (v: 1.5, A:0.425)
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("barrel");
+                break;
+      case "slalom":// (v: 1.21, A:0.6) 
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("slalom");
                 break;
       default:
         break;
     }
+    
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
