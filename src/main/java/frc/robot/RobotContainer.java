@@ -26,7 +26,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.Drive.AutoDrivePath;
 // import frc.robot.Constants.DriveTrain;
 import frc.robot.subsystems.DriveTrain;
 
@@ -63,6 +65,7 @@ public class RobotContainer {
     m_chooser.addOption("koloR2m Auto", "koloR2m");
     m_chooser.addOption("barrel Auto", "barrel");
     m_chooser.addOption("slalom Auto", "slalom");
+    m_chooser.addOption("bounce Auto", "bounce");
 
     SmartDashboard.putData(m_chooser);
 
@@ -162,6 +165,13 @@ public Command getAutonomousCommandFromPath(String fileName) {
 
         // Run path following command, then stop at the end.
         return ramseteCommand.andThen(() -> m_robotDrive.driveDriveTrainByVoltage(0, 0));
+    }
+
+    public SequentialCommandGroup complexAutoCommend(){
+        return new SequentialCommandGroup(
+            new AutoDrivePath(m_robotDrive, "bounce1"),
+            new AutoDrivePath(m_robotDrive, "bounce2")
+        );
     }
 
     public String getSelectedAutonomous() {

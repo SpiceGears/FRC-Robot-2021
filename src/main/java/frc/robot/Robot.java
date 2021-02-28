@@ -6,8 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Drive.teleopDrive;
 import frc.robot.subsystems.DriveTrain;
 // import frc.robot.subsystems.DriveTrainAuto;
@@ -20,6 +23,7 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  // private SequentialCommandGroup m_autonomousSequentialCommandGroup;
 
   private RobotContainer m_robotContainer;
 
@@ -94,18 +98,24 @@ public class Robot extends TimedRobot {
         break;
       case "koloR2m":
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("koloR2m");
-                break;
+        break;
       case "barrel": // (v: 1.5, A:0.425)
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("barrel");
-                break;
+        break;
       case "slalom":// (v: 1.21, A:0.6) 
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("slalom");
-                break;
+        break;
+      case "bounce":// (v: 1.21, A:0.6)   
+      m_autonomousCommand = m_robotContainer.complexAutoCommend();
+        // m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("bounce2");
+          // .andThen(() -> 
+          //   m_robotContainer.getAutonomousCommandFromPath("bounce1")
+          // );
+        break;
       default:
         break;
     }
     
-
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -116,6 +126,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
+    SmartDashboard.putBoolean("isFinish", m_autonomousCommand.isFinished());
     // driveTrain.autonomusPerodoic();
   }
 
@@ -154,3 +165,5 @@ public class Robot extends TimedRobot {
   //   driveTrain.setDefaultCommand(new teleopDrive());
   // }
 }
+
+
