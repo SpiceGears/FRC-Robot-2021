@@ -4,10 +4,16 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.Drive.teleopDrive;
 import frc.robot.subsystems.DriveTrain;
+// import frc.robot.subsystems.DriveTrainAuto;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -17,9 +23,14 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  // private SequentialCommandGroup m_autonomousSequentialCommandGroup;
 
-  public static OI oI;
-  public static DriveTrain driveTrain;
+  private RobotContainer m_robotContainer;
+
+  // public static OI oI;
+  // public static DriveTrain driveTrain;
+
+  // Command driveAuto;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -29,14 +40,18 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+    m_robotContainer = new RobotContainer();
 
-    oI = new OI();
-    initSubsystems();
+
+    // oI = new OI();
+    // initSubsystems();
+    // setDefaultCommands();
+
   }
 
-  private void initSubsystems() {
-    driveTrain = new DriveTrain();
-  }
+  // private void initSubsystems() {
+  //   // driveTrain = new DriveTrain();
+  // }
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for
@@ -58,24 +73,62 @@ public class Robot extends TimedRobot {
 
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledPeriodic() {
+
+  }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    
+    // m_robotContainer.m_robotDrive.autonomousInit();
+    m_autonomousCommand = null;
+    String autonomousSelected = m_robotContainer.getSelectedAutonomous();
+    switch (autonomousSelected) {
+      case "balonAuto":
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("balon");
+        break;
+      case "prosto3mAuto":
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("prosto3m");
+        break;
+      case "koloR2m":
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("koloR2m");
+        break;
+      case "barrel": // (v: 1.5, A:0.425)
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("barrel");
+        break;
+      case "slalom":// (v: 1.21, A:0.6) 
+        m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("slalom");
+        break;
+      case "bounce":// (v: 1.21, A:0.6)   
+      m_autonomousCommand = m_robotContainer.complexAutoCommend();
+        // m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("bounce2");
+          // .andThen(() -> 
+          //   m_robotContainer.getAutonomousCommandFromPath("bounce1")
+          // );
+        break;
+      default:
+        break;
+    }
+    
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    SmartDashboard.putBoolean("isFinish", m_autonomousCommand.isFinished());
+    // driveTrain.autonomusPerodoic();
+  }
 
   @Override
   public void teleopInit() {
@@ -83,14 +136,18 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    Compressor compressor = new Compressor(0);
+
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
   }
 
   /** This function is called periodically during operator control. */
-  @Override
-  public void teleopPeriodic() {}
+  @Override  public void teleopPeriodic() {
+    
+  }
 
   @Override
   public void testInit() {
@@ -100,5 +157,13 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during test mode. */
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+
+  }
+
+  // public void setDefaultCommands(){
+  //   driveTrain.setDefaultCommand(new teleopDrive());
+  // }
 }
+
+
