@@ -9,7 +9,7 @@ import frc.robot.subsystems.Intake;
 
 public class IntakeClose extends CommandBase {
   /** Creates a new IntakeClose. */
-  private Intake m_intake;
+  private final Intake m_intake;
   public IntakeClose(Intake subsystem) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_intake = subsystem;

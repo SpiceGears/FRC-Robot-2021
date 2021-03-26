@@ -23,8 +23,8 @@ import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
-import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
 
 import java.io.IOException;
@@ -95,7 +95,7 @@ public class RobotContainer {
     
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
-    intakeRotateButton.whileHeld(new IntakeRotate(m_intake));  
+    intakeRotateButton.whileHeld(new IntakeClose(m_intake));
 }
 
   /**
