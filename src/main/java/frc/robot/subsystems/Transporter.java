@@ -4,14 +4,48 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Ultrasonic;
+import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.PortMap;
 
 public class Transporter extends SubsystemBase {
   /** Creates a new Transporter. */
-  public Transporter() {}
+
+  private WPI_VictorSPX transportMotor;
+
+  private Ultrasonic ultrasonic;
+  private DigitalInput photoElectric;
+  private DigitalInput limitSwitch;
+
+  public Transporter() {
+    transportMotor = new WPI_VictorSPX(PortMap.Transporter.kTransportMotor);
+    photoElectric = new DigitalInput(PortMap.Transporter.kPhotoSensor);
+    limitSwitch = new DigitalInput(PortMap.Transporter.kLimitSwitch);
+    ultrasonic = new Ultrasonic(3, 4, Unit.kMillimeters);
+
+    transportMotor.configFactoryDefault();
+
+    ultrasonic.setAutomaticMode(true);
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    
+  }
+
+  private boolean isBallInIntake(){
+    double distance = ultrasonic.getRangeMM();
+
+    if(distance > 50*10 || distance < 5*10){
+
+    }
+    
+    return true;
   }
 }

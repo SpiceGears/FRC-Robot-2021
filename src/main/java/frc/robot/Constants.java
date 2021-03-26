@@ -62,7 +62,7 @@ public final class Constants {
     public static class Joysticks{
         //Drive
         public static final double kDriverJoystickDeadzone = 0.12;
-        public static final double driveTurnDivide = 2.0;
+        public static final double driveTurnDivide = 1.17;
 
         //Intake
         public static final int kIntakeCloseButton = 9;
