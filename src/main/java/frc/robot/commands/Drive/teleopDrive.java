@@ -10,7 +10,7 @@ import frc.robot.Constants;
 // import frc.robot.Robot;
 // import frc.robot.subsystems.DriveTrain;
 
-public class teleopDrive extends CommandBase {
+public class TeleopDrive extends CommandBase {
   /** Creates a new teleopDrive. */
   // DriveTrain driveTrain = Robot.driveTrain;
   final Constants constants = new Constants();
@@ -19,7 +19,7 @@ public class teleopDrive extends CommandBase {
   double robotTurn;
   double maxVelocity, currentVelocityLeft, acceleratingTimeStart, acceleratingTime = 0;
 
-  public teleopDrive() {
+  public TeleopDrive() {
     // Use addRequirements() here to declare subsystem dependencies.
     // addRequirements(Robot.driveTrain);
   }
