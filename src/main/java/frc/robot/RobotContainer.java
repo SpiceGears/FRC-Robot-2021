@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Drive.AutoDrivePath;
 // import frc.robot.Constants.DriveTrain;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LimeLight;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -48,6 +49,7 @@ public class RobotContainer {
 
   private final Command balonAuto = getAutonomousCommandFromPath("balon");
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
+  private final LimeLight m_limelight = new LimeLight();
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
