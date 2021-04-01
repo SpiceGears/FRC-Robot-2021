@@ -19,10 +19,10 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.PortMap.Transporter;
 import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
-import frc.robot.commands.Intake.IntakeRotate;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
@@ -46,6 +46,7 @@ public class RobotContainer {
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
   private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
+  private final Transporter m_Transporter = new Transporter();
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
@@ -55,7 +56,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the button bindings
-    // configureButtonBindings();
+    configureButtonBindings();
 
     m_chooser.setDefaultOption("none Auto", "null");
     m_chooser.addOption("balon Auto", "balonAuto");
