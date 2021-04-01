@@ -4,15 +4,18 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Compressor;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
+
+import edu.wpi.cscore.CvSink;
+import edu.wpi.cscore.CvSource;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.Drive.teleopDrive;
-import frc.robot.subsystems.DriveTrain;
 // import frc.robot.subsystems.DriveTrainAuto;
 
 /**
@@ -23,6 +26,9 @@ import frc.robot.subsystems.DriveTrain;
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  
+  private int camera_width = 800;
+  private int camera_height = 600;
   // private SequentialCommandGroup m_autonomousSequentialCommandGroup;
 
   private RobotContainer m_robotContainer;
@@ -42,6 +48,30 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
+    new Thread(() -> {
+
+      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(1);
+      camera.setResolution(camera_width, camera_height);
+
+      MjpegServer s = CameraServer.getInstance().addServer("gripStream");
+      s.setSource(camera);
+
+      CvSink cvSink = CameraServer.getInstance().getVideo();
+      CvSource outputStream = CameraServer.getInstance().putVideo("Intake", camera_width, camera_height);
+
+      Mat source = new Mat();
+      Mat output = new Mat();
+
+      while(!Thread.interrupted()) {
+        if (cvSink.grabFrame(source) == 0) {
+          outputStream.notifyError(cvSink.getError());
+          continue;
+        }
+        Imgproc.cvtColor(source, output, Imgproc.COLOR_BGR2GRAY);
+        outputStream.putFrame(output);
+      }
+
+    }).start();
 
     // oI = new OI();
     // initSubsystems();
@@ -69,6 +99,8 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    //CameraServer cameraServer
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -136,9 +168,6 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-
-    Compressor compressor = new Compressor(0);
-
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }

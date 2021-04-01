@@ -59,8 +59,15 @@ public final class Constants {
     }
 
     //Joystick
-    public static class Joystick{
+    public static class Joysticks{
+        //Drive
         public static final double kDriverJoystickDeadzone = 0.12;
+        public static final double driveTurnDivide = 1.17;
+
+        //Intake
+        public static final int kIntakeCloseButton = 9;
+        public static final int kIntakeOpenButton = 10;
+        public static final int kIntakeRotateButton = 6;
     }
 
 
