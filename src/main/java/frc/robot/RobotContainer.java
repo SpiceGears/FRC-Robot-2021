@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -61,6 +64,11 @@ public class RobotContainer {
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
   XboxController m_driverController = new XboxController(0);
+
+  NetworkTable mNetworkTable;
+  NetworkTableEntry isRight;
+  NetworkTableEntry isLeft;
+  NetworkTableEntry isDown;
 
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -191,16 +199,61 @@ public Command getAutonomousCommandFromPath(String fileName) {
     }
 
     public SequentialCommandGroup galaxyAutoCommend(){
-        return new SequentialCommandGroup(
-            new IntakeOpen(m_intake),
-            new WaitCommand(0.0),
-            new ParallelRaceGroup(
-                new AutoDrivePath(m_robotDrive, "galaxySearchB_BLUE")
-                // new IntakeRotate(m_intake)
-            ),
+        mNetworkTable = NetworkTableInstance.getDefault().getTable("DetectedObjects");
 
-            new IntakeClose(m_intake)
-        );
+        isRight = mNetworkTable.getEntry("is_ball_right");
+        isLeft = mNetworkTable.getEntry("is_ball_left");
+        isDown = mNetworkTable.getEntry("is_ball_under_line");
+
+        if(isDown.getBoolean(false)){
+            if(isLeft.getBoolean(false) || isRight.getBoolean(false)){
+                return new SequentialCommandGroup(
+                    new IntakeOpen(m_intake),
+                    new WaitCommand(0.3),
+                    new ParallelRaceGroup(
+                        new AutoDrivePath(m_robotDrive, "galaxySearchA_RED")
+                        // new IntakeRotate(m_intake)
+                    ),
+
+                    new IntakeClose(m_intake)
+                );
+            }else{
+                return new SequentialCommandGroup(
+                    new IntakeOpen(m_intake),
+                    new WaitCommand(0.3),
+                    new ParallelRaceGroup(
+                        new AutoDrivePath(m_robotDrive, "galaxySearchB_RED")
+                        // new IntakeRotate(m_intake)
+                    ),
+
+                    new IntakeClose(m_intake)
+                );
+            }
+        }else{
+            if(isLeft.getBoolean(false) || isRight.getBoolean(false)){
+                return new SequentialCommandGroup(
+                    new IntakeOpen(m_intake),
+                    new WaitCommand(0.0),
+                    new ParallelRaceGroup(
+                        new AutoDrivePath(m_robotDrive, "galaxySearchA_BLUE")
+                        // new IntakeRotate(m_intake)
+                    ),
+
+                    new IntakeClose(m_intake)
+                );
+            }else{
+                return new SequentialCommandGroup(
+                    new IntakeOpen(m_intake),
+                    new WaitCommand(0.0),
+                    new ParallelRaceGroup(
+                        new AutoDrivePath(m_robotDrive, "galaxySearchB_BLUE")
+                        // new IntakeRotate(m_intake)
+                    ),
+
+                    new IntakeClose(m_intake)
+                );
+            }
+        }
     }
 
     public String getSelectedAutonomous() {
