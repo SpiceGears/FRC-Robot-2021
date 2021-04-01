@@ -11,11 +11,12 @@ from networktables import NetworkTables
 def nothing(something):
     pass
 
-net = cv2.dnn.readNet("/media/grelson/Programming/Java/FRC/kod kopia zapasowa/model.weights",
- "/model.cfg")
+net = cv2.dnn.readNet("D:/Programowanie/Python/power_cells/power_cells_model/model.weights",
+ "D:/Programowanie/Python/power_cells/power_cells_model/model.cfg")
 
-classes_file = "power_cells_model/names.txt"
 classes = ['power_cell']
+
+# classes_file = "power_cells_model/names.txt"
 # with open(classes_file, 'r') as f:
 #    classes = [line.strip() for line in f.readlines()]
 
@@ -28,12 +29,21 @@ ip = "10.58.83.2"
 NetworkTables.initialize(server=ip)
 network_tables = NetworkTables.getTable("DetectedObjects")
 
+img_width = 800
+img_height = 600
+
 cv2.namedWindow("Image")
 switch = '0 : OFF\n1 : ON'
-cv2.createTrackbar('y_pose', 'Image', 0, 300, nothing)
-cv2.setTrackbarPos('y_pose', 'Image', 170)
+cv2.createTrackbar('y_pose', 'Image', 0, img_height, nothing)
+cv2.setTrackbarPos('y_pose', 'Image', 340)
 
-cam = 0
+cv2.createTrackbar('x_right_pose', 'Image', 100, img_width, nothing)
+cv2.setTrackbarPos('x_right_pose', 'Image', 150)
+
+cv2.createTrackbar('x_left_pose', 'Image', 0, img_width, nothing)
+cv2.setTrackbarPos('x_left_pose', 'Image', img_width-150)
+
+cam = 1
 if cam == 0:
     cap = cv2.VideoCapture(0)
 else:
@@ -55,7 +65,6 @@ while True:
 
         _, frame = cap.read()
         # frame = cv2.flip(frame, -1)
-
         time_now = datetime.datetime.now()
 
         # cv2.imwrite('D:\\frames_warsztat\\frame{0}_{1}.jpg'.format(frame_id, time_now.strftime("%d_%H_%M_%S")) , frame)
@@ -101,13 +110,9 @@ while True:
                     class_ids.append(class_id)
 
         indexes = cv2.dnn.NMSBoxes(boxes, confidences, 0.4, 0,6)
-
         network_tables.putString("data", json.dumps(detected_objects))
 
-
-        line_y = cv2.getTrackbarPos('y_pose', 'Image')
-        cv2.line(frame, (0, height - line_y), (width, height - line_y), (0, 0, 255), 1)
-
+        # Draw rectangles
         for i in range(len(boxes)):
             if i in indexes:
                 x, y, w, h = boxes[i]
@@ -116,21 +121,45 @@ while True:
                 color = (0, 0, 255)
                 cv2.rectangle(frame, (x, y), (x+w, y+h), color, 2)
                 cv2.putText(frame, label + " " + str(round(confidence, 2)), (x, y + 30), font, 1, (0, 0, 0), 2)
-                cv2.putText(frame,"x: " + str(x), (x, y + 45), font, 1, (0, 0, 0), 2)
-                cv2.putText(frame,"y: " + str(y), (x, y + 60), font, 1, (0, 0, 0), 2)
+                # cv2.putText(frame,"x: " + str(x), (x, y + 45), font, 1, (0, 0, 0), 2)
+                # cv2.putText(frame,"y: " + str(y), (x, y + 60), font, 1, (0, 0, 0), 2)
                 print(label + " " + str(round(confidence, 2)))
 
+        # Calculate FPS 
         elapsed_time = time.time() - starting_time
         fps = 1 / elapsed_time
         print("Time per frame: " + str(elapsed_time) + " FPS: " + str(fps))
         cv2.putText(frame, "FPS: " + str(round(fps, 2)), (10, 20), font, 1, (0, 0, 0), 2)
 
+        # Check if ball under the y line 
+        line_y = cv2.getTrackbarPos('y_pose', 'Image')
+        cv2.line(frame, (0, line_y), (width, line_y), (0, 0, 255), 1)
         is_ball_under_line = False
         for power_cell in detected_objects:
             if power_cell["center_y"] >= line_y:
                 print("na dole")
                 is_ball_under_line = True
 
+        # check right
+        line_x_right = cv2.getTrackbarPos('x_right_pose', 'Image')
+        cv2.line(frame, (line_x_right, 0), (line_x_right, height), (255, 255, 255), 1)
+        is_ball_right = False
+        for power_cell in detected_objects:
+            if power_cell["center_x"] <= line_x_right and power_cell["center_y"] < line_y:
+                print("na prawo")
+                is_ball_right = True
+
+        # check left
+        line_x_left = cv2.getTrackbarPos('x_left_pose', 'Image')
+        cv2.line(frame, (line_x_left, 0), (line_x_left, height), (255, 255, 255), 1)
+        is_ball_left = False
+        for power_cell in detected_objects:
+            if power_cell["center_x"] >= line_x_left and power_cell["center_y"] < line_y:
+                print("na lewo")
+                is_ball_left = True
+
+        network_tables.putBoolean("is_ball_left", is_ball_left)
+        network_tables.putBoolean("is_ball_right", is_ball_right)
         network_tables.putBoolean("is_ball_under_line", is_ball_under_line)
         
         cv2.imshow("Image", frame)
