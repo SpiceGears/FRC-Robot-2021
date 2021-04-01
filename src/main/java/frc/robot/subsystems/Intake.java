@@ -90,7 +90,6 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     intakeRotate();
-    SmartDashboard.putString("iNTAKE", "VAL");
     // This method will be called once per scheduler run
   }
 }

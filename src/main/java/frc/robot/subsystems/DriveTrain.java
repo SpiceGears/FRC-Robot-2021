@@ -52,6 +52,7 @@ public class DriveTrain extends SubsystemBase {
     diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
     
     autonomousInit();
+    
   }
 
   private void configurateMotors(){
@@ -75,7 +76,6 @@ public class DriveTrain extends SubsystemBase {
     rightSlaveDriveTrainFirst.follow(rightMasterDriveTrain);
     rightSlaveDriveTrainSecond.follow(rightMasterDriveTrain);
 
-    
   }
 
   private void configLeftMaster(WPI_TalonSRX talon){

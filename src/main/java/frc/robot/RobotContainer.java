@@ -191,12 +191,11 @@ public Command getAutonomousCommandFromPath(String fileName) {
     }
 
     public SequentialCommandGroup galaxyAutoCommend(){
-
         return new SequentialCommandGroup(
             new IntakeOpen(m_intake),
-            new WaitCommand(2),
+            new WaitCommand(0.0),
             new ParallelRaceGroup(
-                new AutoDrivePath(m_robotDrive, "galaxy_search")
+                new AutoDrivePath(m_robotDrive, "galaxySearchB_BLUE")
                 // new IntakeRotate(m_intake)
             ),
 

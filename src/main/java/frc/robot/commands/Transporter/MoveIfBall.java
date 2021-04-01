@@ -30,7 +30,7 @@ public class MoveIfBall extends CommandBase {
   @Override
   public void execute() {
     if (transporter.isBallIntake() && Veribles.getInstance().isIntakeOpen){
-      transporter.transporterMotor.set(ControlMode.PercentOutput, 0.3);
+      transporter.transporterMotor.set(ControlMode.PercentOutput, 0.42);
       isRotating = true;
     }else{
       if(isRotating){
@@ -39,7 +39,7 @@ public class MoveIfBall extends CommandBase {
             isRotating = false;
             transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
           }
-        }, 500);
+        }, 350);
       }
     }
   }
