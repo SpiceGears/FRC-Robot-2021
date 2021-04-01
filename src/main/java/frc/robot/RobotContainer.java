@@ -26,6 +26,8 @@ import frc.robot.commands.Intake.IntakeRotate;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
+import frc.robot.subsystems.LimeLight;
+
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -42,7 +44,7 @@ public class RobotContainer {
   public final NetworkTablesSub m_nNetworkTablesSub = new NetworkTablesSub();
   private final Command balonAuto = getAutonomousCommandFromPath("balon");
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
-
+  private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
