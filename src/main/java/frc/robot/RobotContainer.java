@@ -15,17 +15,23 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.PortMap.Transporter;
 import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
+import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
+import frc.robot.subsystems.Transporter;
 import frc.robot.subsystems.LimeLight;
 
 
@@ -42,11 +48,15 @@ public class RobotContainer {
   // The robot's subsystems
   public final DriveTrain m_robotDrive = new DriveTrain();
   public final NetworkTablesSub m_nNetworkTablesSub = new NetworkTablesSub();
+
   private final Command balonAuto = getAutonomousCommandFromPath("balon");
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
   private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
-  private final Transporter m_Transporter = new Transporter();
+
+
+  private final Transporter m_transporter = new Transporter();
+  private final MoveIfBall moveIfBall = new MoveIfBall(m_transporter);
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
@@ -60,6 +70,7 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("none Auto", "null");
     m_chooser.addOption("balon Auto", "balonAuto");
+    m_chooser.addOption("galaxy seartch", "galaxySearch");
     m_chooser.addOption("prosto3m Auto", "prosto3mAuto");
     m_chooser.addOption("koloR2m Auto", "koloR2m");
     m_chooser.addOption("barrel Auto", "barrel");
@@ -70,6 +81,7 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
+    m_transporter.setDefaultCommand(moveIfBall);
     m_robotDrive.setDefaultCommand(
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
@@ -98,7 +110,7 @@ public class RobotContainer {
     
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
-    intakeRotateButton.whileHeld(new IntakeClose(m_intake));
+    intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
 }
 
   /**
@@ -175,6 +187,20 @@ public Command getAutonomousCommandFromPath(String fileName) {
             new AutoDrivePath(m_robotDrive, "bounce2"),
             new AutoDrivePath(m_robotDrive, "bounce3"),
             new AutoDrivePath(m_robotDrive, "bounce4")
+        );
+    }
+
+    public SequentialCommandGroup galaxyAutoCommend(){
+
+        return new SequentialCommandGroup(
+            new IntakeOpen(m_intake),
+            new WaitCommand(2),
+            new ParallelRaceGroup(
+                new AutoDrivePath(m_robotDrive, "galaxy_search")
+                // new IntakeRotate(m_intake)
+            ),
+
+            new IntakeClose(m_intake)
         );
     }
 

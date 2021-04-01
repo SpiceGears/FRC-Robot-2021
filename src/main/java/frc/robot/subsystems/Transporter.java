@@ -4,12 +4,10 @@
 
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Ultrasonic;
-import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,10 +31,17 @@ public class Transporter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("ultrasonic", getUltrasonicDistance());
+    SmartDashboard.putBoolean("is ball intake", isBallIntake());
   }
 
   public double getUltrasonicDistance(){
     return ultrasonic.getRangeMM()/10;
+  }
+
+  public boolean isBallIntake(){
+    if (getUltrasonicDistance() < 13 || getUltrasonicDistance() > 26){
+      return true;
+    }
+    return false;
   }
 }

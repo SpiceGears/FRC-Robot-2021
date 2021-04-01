@@ -122,6 +122,9 @@ public class Robot extends TimedRobot {
     m_autonomousCommand = null;
     String autonomousSelected = m_robotContainer.getSelectedAutonomous();
     switch (autonomousSelected) {
+      case "galaxySearch":
+        m_autonomousCommand = m_robotContainer.galaxyAutoCommend();
+        break;
       case "balonAuto":
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("balon");
         break;
@@ -138,7 +141,7 @@ public class Robot extends TimedRobot {
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("slalom");
         break;
       case "bounce":// (v: 1.21, A:0.6)   
-      m_autonomousCommand = m_robotContainer.complexAutoCommend();
+        m_autonomousCommand = m_robotContainer.complexAutoCommend();
         // m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("bounce2");
           // .andThen(() -> 
           //   m_robotContainer.getAutonomousCommandFromPath("bounce1")

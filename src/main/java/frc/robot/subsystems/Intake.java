@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PortMap;
+import frc.robot.Veribles;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -33,7 +34,7 @@ public class Intake extends SubsystemBase {
     intakeMotor = new WPI_VictorSPX(PortMap.Intake.kIntakeMotor);
     compressor = new Compressor(0);
 
-    delayToOffSolenoid = 1000;
+    delayToOffSolenoid = 700;
 
     intakeSolenoid.set(Value.kForward);
     isIntakeOpen = false;
@@ -41,6 +42,7 @@ public class Intake extends SubsystemBase {
 
   // Closes intake
   public void intakeClose() {
+    Veribles.getInstance().isIntakeOpen = false;
     isIntakeOpen = false;
     intakeSolenoid.set(Value.kForward);
     
@@ -56,8 +58,10 @@ public class Intake extends SubsystemBase {
 
   // Opens Intake
   public void intakeOpen() {
-    intakeSolenoid.set(Value.kReverse);
     
+    intakeSolenoid.set(Value.kReverse);
+    Veribles.getInstance().isIntakeOpen = true;
+
     TimerTask task = new TimerTask() {
       public void run() {
         intakeSolenoid.set(Value.kOff);
@@ -85,6 +89,7 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    intakeRotate();
     SmartDashboard.putString("iNTAKE", "VAL");
     // This method will be called once per scheduler run
   }

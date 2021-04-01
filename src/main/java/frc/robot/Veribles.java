@@ -8,9 +8,9 @@ package frc.robot;
 public class Veribles {
 
     private static Veribles instance;
-    
-    private Veribles(){
 
+    public boolean isIntakeOpen = false;
+    private Veribles(){
     }
 
     public static Veribles getInstance(){
