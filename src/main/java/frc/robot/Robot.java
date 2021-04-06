@@ -46,6 +46,10 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
+
+    Veribles.getInstance().isAutonomusEnabled = false;
+    
+
     m_robotContainer = new RobotContainer();
 
     new Thread(() -> {
@@ -100,6 +104,8 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+    SmartDashboard.putBoolean("Is auto enabled", Veribles.getInstance().isAutonomusEnabled);
+
     //CameraServer cameraServer
   }
 
@@ -111,13 +117,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledPeriodic() {
-
+    Veribles.getInstance().isAutonomusEnabled = false;
   }
 
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    
+    Veribles.getInstance().isAutonomusEnabled = true;
+  
     // m_robotContainer.m_robotDrive.autonomousInit();
     m_autonomousCommand = null;
     String autonomousSelected = m_robotContainer.getSelectedAutonomous();
@@ -162,6 +169,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     SmartDashboard.putBoolean("isFinish", m_autonomousCommand.isFinished());
+    
     // driveTrain.autonomusPerodoic();
   }
 
@@ -171,6 +179,7 @@ public class Robot extends TimedRobot {
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    Veribles.getInstance().isAutonomusEnabled = false;
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
@@ -178,7 +187,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override  public void teleopPeriodic() {
-    
+    Veribles.getInstance().isAutonomusEnabled = false;
   }
 
   @Override

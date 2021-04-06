@@ -10,6 +10,8 @@ public class Veribles {
     private static Veribles instance;
 
     public boolean isIntakeOpen = false;
+    public boolean isAutonomusEnabled = false;
+
     private Veribles(){
     }
 
