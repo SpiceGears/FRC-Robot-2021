@@ -68,6 +68,9 @@ public final class Constants {
         public static final int kIntakeCloseButton = 9;
         public static final int kIntakeOpenButton = 10;
         public static final int kIntakeRotateButton = 6;
+        
+        //shooter
+        public static final int kShooterShooting = 3;
     }
 
 

@@ -28,10 +28,13 @@ import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.Shooter.ShooterRotate;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDstate;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Transporter;
 import frc.robot.subsystems.LimeLight;
 
@@ -54,6 +57,8 @@ public class RobotContainer {
   private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
   private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
+  private final Shooter m_shooter =  new Shooter();
+  private final LEDstate m_lLeDstate = new LEDstate();
 
 
   private final Transporter m_transporter = new Transporter();
@@ -113,10 +118,16 @@ public class RobotContainer {
     JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
     JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
     JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
-    
+
+    JoystickButton shooterButton = new JoystickButton(m_driverController, Constants.Joysticks.kShooterShooting);
+
+
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
+
+    shooterButton.whileHeld(new ShooterRotate(m_shooter));
+
 }
 
   /**
