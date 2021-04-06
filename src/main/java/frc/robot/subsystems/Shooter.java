@@ -44,4 +44,13 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public double getLeftRPS(){
+    return(lMaster.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
+  }
+
+  public double getRightRPS(){
+    return(rMaster.getSelectedSensorVelocity()/4096) * 10; // ticks per rotation
+  }
+
 }
