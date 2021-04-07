@@ -23,7 +23,7 @@ public class ShooterController extends CommandBase {
   private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(Constants.Shooter.shooterRPMsetPoint);
   
 
-  private static final double kFlywheelMomentOfInertia = 0.00020; // kg * m^2
+  private static final double kFlywheelMomentOfInertia = Constants.Shooter.kFlywheelMomentOfInertia; // kg * m^2
 
   // Reduction between motors and encoder, as output over input. If the flywheel spins slower than
   // the motors, this number should be greater than one.

@@ -10,14 +10,20 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Veribles;
+import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Transporter;
 
 public class MoveIfBall extends CommandBase {
   Transporter transporter;
+  Intake intake;
+
   boolean isRotating = false;
+
   /** Creates a new MoveIfBall. */
-  public MoveIfBall(Transporter transporter) {
+  public MoveIfBall(Transporter transporter, Intake intake) {
     this.transporter = transporter;
+    this.intake = intake;
     addRequirements(transporter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -31,6 +37,7 @@ public class MoveIfBall extends CommandBase {
   public void execute() {
     if (transporter.isBallIntake() && Veribles.getInstance().isIntakeOpen && !transporter.isTransporterFull()){
       transporter.transporterMotor.set(ControlMode.PercentOutput, 0.42);
+      intake.intakeRotate();
       isRotating = true;
     }else{
       if(isRotating){
@@ -38,8 +45,9 @@ public class MoveIfBall extends CommandBase {
           public void run() {
             isRotating = false;
             transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
+            intake.intakeStopMotor();
           }
-        }, 300);
+        }, 100);
       }
       if(transporter.isTransporterFull() && !Veribles.getInstance().isBallsOutSheduled){
         transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);

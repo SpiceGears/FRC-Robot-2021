@@ -25,7 +25,7 @@ public class AimUp extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    aiming.set(-0.6);
+    aiming.set(-0.4);
   }
 
   // Called once the command ends or is interrupted.

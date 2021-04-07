@@ -26,7 +26,16 @@ public class AimToTarget extends InstantCommand {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    limeLight.setMode(3);
     setpoint = limeLight.getYOffset();
     aiming.setSetpoint(0);
+
+    /**
+     Wartości potencjometra dla odledłości od celu
+
+     0.24 - 
+     
+    
+     */
   }
 }

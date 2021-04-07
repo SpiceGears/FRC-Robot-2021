@@ -30,7 +30,7 @@ LimeLight limeLight;
           driveTrain.setSpeedDriveTrainPercentOutput(0, 0, output);
         });
         limeLight = _limelight;
-        _limelight.setMode(3);
+        limeLight.setMode(3);
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
 
@@ -42,7 +42,6 @@ LimeLight limeLight;
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    limeLight.setMode(1);
     return getController().atSetpoint();
   }
 }

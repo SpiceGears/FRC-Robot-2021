@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -31,10 +32,10 @@ import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
 import frc.robot.commands.Shooter.ShooterController;
-import frc.robot.commands.Shooter.ShooterRotate;
 import frc.robot.commands.Shooter.AimDown;
 import frc.robot.commands.Shooter.AimUp;
 import frc.robot.commands.Transporter.BallsOut;
+import frc.robot.commands.Transporter.BallsOut5S;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDstate;
@@ -68,7 +69,7 @@ public class RobotContainer {
 
 
   private final Transporter m_transporter = new Transporter();
-  private final MoveIfBall moveIfBall = new MoveIfBall(m_transporter);
+  private final MoveIfBall moveIfBall = new MoveIfBall(m_transporter, m_intake);
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
@@ -139,7 +140,7 @@ public class RobotContainer {
     aimDownButton.whileHeld(new AimDown(m_aiming));
     aimUpButton.whileHeld(new AimUp(m_aiming));
     aimToAngleButton.whenPressed(new InstantCommand(m_aiming::enable, m_aiming));
-    ballsoutButton.whenPressed(new BallsOut(m_transporter));
+    ballsoutButton.whenPressed(new BallsOut5S(m_transporter));
     aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
     turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
@@ -147,7 +148,14 @@ public class RobotContainer {
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
 
     // shooterButton.whileHeld(new ShooterRotate(m_shooter));
-    shooterButton.whileHeld(new ShooterController(m_shooter));
+    shooterButton.whileHeld(
+        new ParallelCommandGroup(
+        new ShooterController(m_shooter),
+        new SequentialCommandGroup(
+            new WaitCommand(1),
+            new BallsOut(m_transporter)
+        )
+    ));
 
 }
 

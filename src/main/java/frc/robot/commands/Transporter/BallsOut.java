@@ -1,21 +1,18 @@
 // Copyright (c) FIRST and other WPILib contributors.
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
-package frc.robot.commands.Transporter;
 
-import java.util.Timer;
-import java.util.TimerTask;
+package frc.robot.commands.Transporter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.Veribles;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Transporter;
 
-public class BallsOut extends InstantCommand {
+public class BallsOut extends CommandBase {
   Transporter transporter; 
 
-  /** Creates a new ShitTrashBalls. */
+  /** Creates a new BallsOut. */
   public BallsOut(Transporter _transporter) {
     addRequirements(_transporter);
     transporter = _transporter;
@@ -25,22 +22,23 @@ public class BallsOut extends InstantCommand {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    if(!Veribles.getInstance().isBallsOutSheduled){
-      Veribles.getInstance().isBallsOutSheduled = true;
-      transporter.transporterMotor.set(ControlMode.PercentOutput, 0.5);
+  public void initialize() {}
 
-      new Timer().schedule(new TimerTask(){
-        public void run() {
-          Veribles.getInstance().isBallsOutSheduled = false;
-          transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
-        }
-      }, 1000);
-    }
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    transporter.transporterMotor.set(ControlMode.PercentOutput, 0.3);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
+  }
 
+  // Returns true when the command should end.
+  @Override
+  public boolean isFinished() {
+    return false;
+  }
 }

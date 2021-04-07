@@ -15,16 +15,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
-
-    //Shooter
-
-    public static class Shooter {
-        public static final int shooterRPMsetPoint = 900;
-        public static final int minRPStoShoot = 50;
-    }
-
-
     
     //Talon
 
@@ -54,8 +44,8 @@ public final class Constants {
         public static final double kTurnRateToleranceDegPerS = 8;
 
         public static final double kPDriveTrainTurnToAngle = 0.1 * 0.6;
-        public static final double kIDriveTrainTurnToAngle = 0.0015 * 0.6;
-        public static final double kDDriveTrainTurnToAngle = 0.01 * 0.6;
+        public static final double kIDriveTrainTurnToAngle = 0.1225 * 0.6;
+        public static final double kDDriveTrainTurnToAngle = 0.015 * 0.6;
         
         //Drive Train Autonomus
         public static class Autonomus{
@@ -75,9 +65,13 @@ public final class Constants {
 
     //Shooter
     public static class Shooter{
-        public static final double kPAimToAngle = 0.05 * 1;
+        public static final double kPAimToAngle = 0.18 * 1;
         public static final double kIAimToAngle = 0.0 * 1;
-        public static final double kDAimToAngle = 0.0 * 1;
+        public static final double kDAimToAngle = 0.015 * 1;
+        
+        public static final int shooterRPMsetPoint = 2500;
+        public static final double kFlywheelMomentOfInertia = 0.0001;
+        public static final int minRPStoShoot = 50;
     }
 
     //Joystick
@@ -89,8 +83,8 @@ public final class Constants {
         //Shooter
         public static final int kTurnToAngleButton = 1;
         public static final int kAimToAngleButton = 2;
-        public static final int kAimUpButton = 6;
-        public static final int kAimDownButton = 5;
+        public static final int kAimUpButton = 8;
+        public static final int kAimDownButton = 7;
         public static final int kBallsoutButton = 4;
 
         //Intake
