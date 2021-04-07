@@ -13,8 +13,6 @@ import frc.robot.subsystems.LimeLight;
 public class AimToTarget extends InstantCommand {
   private Aiming aiming;
   private LimeLight limeLight;
-
-  private double setpoint;
   
   public AimToTarget(Aiming _aiming, LimeLight _limeLight) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -27,15 +25,6 @@ public class AimToTarget extends InstantCommand {
   @Override
   public void initialize() {
     limeLight.setMode(3);
-    setpoint = limeLight.getYOffset();
     aiming.setSetpoint(0);
-
-    /**
-     Wartości potencjometra dla odledłości od celu
-
-     0.24 - 
-     
-    
-     */
   }
 }

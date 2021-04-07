@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Veribles;
-import frc.robot.commands.Intake.IntakeRotate;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Transporter;
 

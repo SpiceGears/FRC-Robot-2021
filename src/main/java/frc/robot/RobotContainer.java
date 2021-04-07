@@ -31,6 +31,7 @@ import frc.robot.commands.Drive.TurnToAngle;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.LEDS.TargetToLed;
 import frc.robot.commands.Shooter.ShooterController;
 import frc.robot.commands.Shooter.AimDown;
 import frc.robot.commands.Shooter.AimUp;
@@ -100,6 +101,7 @@ public class RobotContainer {
 
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
+    m_lLeDstate.setDefaultCommand(new TargetToLed(m_lLeDstate, m_limelight));
     m_transporter.setDefaultCommand(moveIfBall);
     m_robotDrive.setDefaultCommand(
         // A split-stick arcade command, with forward/backward controlled by the left
@@ -128,9 +130,6 @@ public class RobotContainer {
     JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
 
     JoystickButton shooterButton = new JoystickButton(m_driverController, Constants.Joysticks.kShooterShooting);
-
-
-
     JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
     JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
     JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
@@ -151,6 +150,7 @@ public class RobotContainer {
     shooterButton.whileHeld(
         new ParallelCommandGroup(
         new ShooterController(m_shooter),
+        new IntakeOpen(m_intake),
         new SequentialCommandGroup(
             new WaitCommand(1),
             new BallsOut(m_transporter)

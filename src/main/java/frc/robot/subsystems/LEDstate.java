@@ -24,7 +24,7 @@ public class LEDstate extends SubsystemBase {
 
   @Override
   public void periodic() { 
-    rainbow();
+    // rainbow();
     LEDS.setData(LEDBuffer);
   }
 
@@ -35,7 +35,7 @@ public class LEDstate extends SubsystemBase {
     LEDS.setData(LEDBuffer);
   }
 
-  private void rainbow(){
+  public void rainbow(){
     // For every pixel
     for (var i = 0; i < LEDBuffer.getLength(); i++) {
       // Calculate the hue - hue is easier for rainbows because the color
@@ -43,7 +43,6 @@ public class LEDstate extends SubsystemBase {
       final var hue = (m_rainbowFirstPixelHueL + (i * 180 / LEDBuffer.getLength())) % 180;
       // Set the value
       LEDBuffer.setHSV(i, hue, 255, 128);
-      SmartDashboard.putNumber("hue", hue );
     }
     // Increase by to make the rainbow "move"
     m_rainbowFirstPixelHueL += 2;
@@ -74,7 +73,7 @@ public class LEDstate extends SubsystemBase {
     } else {
       setRGB(0,0,100);
     }
-  } 
+  }
    
   private void epilepsy(){
     long nowTime = System.currentTimeMillis();
