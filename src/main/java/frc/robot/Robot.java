@@ -123,7 +123,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    Veribles.getInstance().isAutonomusEnabled = true;
   
     // m_robotContainer.m_robotDrive.autonomousInit();
     m_autonomousCommand = null;
@@ -169,7 +168,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     SmartDashboard.putBoolean("isFinish", m_autonomousCommand.isFinished());
-    
+    Veribles.getInstance().isAutonomusEnabled = true;
     // driveTrain.autonomusPerodoic();
   }
 

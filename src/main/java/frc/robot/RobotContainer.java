@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.commands.Drive.AutoDrivePath;
+import frc.robot.commands.Drive.TurnToAngle;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
@@ -113,7 +114,9 @@ public class RobotContainer {
     JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
     JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
     JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
+    JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
     
+    turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
