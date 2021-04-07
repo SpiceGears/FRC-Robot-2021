@@ -104,6 +104,8 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
+
+    SmartDashboard.putBoolean("isBallsOutSheduled", Veribles.getInstance().isBallsOutSheduled);
     SmartDashboard.putBoolean("Is auto enabled", Veribles.getInstance().isAutonomusEnabled);
 
     //CameraServer cameraServer

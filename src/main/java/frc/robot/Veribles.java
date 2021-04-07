@@ -12,6 +12,8 @@ public class Veribles {
     public boolean isIntakeOpen = false;
     public boolean isAutonomusEnabled = false;
 
+    public boolean isBallsOutSheduled = false;
+
     private Veribles(){
     }
 

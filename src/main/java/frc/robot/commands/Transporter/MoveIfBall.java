@@ -29,7 +29,7 @@ public class MoveIfBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (transporter.isBallIntake() && Veribles.getInstance().isIntakeOpen){
+    if (transporter.isBallIntake() && Veribles.getInstance().isIntakeOpen && !transporter.isTransporterFull()){
       transporter.transporterMotor.set(ControlMode.PercentOutput, 0.42);
       isRotating = true;
     }else{
@@ -39,7 +39,10 @@ public class MoveIfBall extends CommandBase {
             isRotating = false;
             transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
           }
-        }, 350);
+        }, 300);
+      }
+      if(transporter.isTransporterFull() && !Veribles.getInstance().isBallsOutSheduled){
+        transporter.transporterMotor.set(ControlMode.PercentOutput, 0.0);
       }
     }
   }

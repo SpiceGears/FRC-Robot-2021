@@ -32,10 +32,16 @@ public class Transporter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("is ball intake", isBallIntake());
+    SmartDashboard.putBoolean("isTransporterFull", isTransporterFull());
+    
   }
 
   public double getUltrasonicDistance(){
     return ultrasonic.getRangeMM()/10;
+  }
+
+  public boolean isTransporterFull(){
+    return !limitSwitch.get();
   }
 
   public boolean isBallIntake(){

@@ -83,6 +83,7 @@ public final class Constants {
         public static final int kAimToAngleButton = 2;
         public static final int kAimUpButton = 6;
         public static final int kAimDownButton = 5;
+        public static final int kBallsoutButton = 4;
 
         //Intake
         public static final int kIntakeCloseButton = 9;

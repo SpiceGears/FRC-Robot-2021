@@ -55,10 +55,16 @@ public class Aiming extends PIDSubsystem {
       // ogranicznik dolu
       if(speed < 0){
         speed = 0;
+        if(speed < -0.2){
+          speed = -0.2;
+        }
       }
-    }else if(potentiometer.get() < 0.30){
+    }else if(potentiometer.get() < 0.35){
       if(speed > 0){
         speed = 0;
+        if(speed > 0.4){
+          speed = 0.4;
+        }
       } 
     }
     aimMotor.set(speed);

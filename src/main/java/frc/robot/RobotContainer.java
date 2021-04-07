@@ -32,6 +32,7 @@ import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
 import frc.robot.commands.Shooter.AimDown;
 import frc.robot.commands.Shooter.AimUp;
+import frc.robot.commands.Transporter.BallsOut;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.DriveTrain;
@@ -123,10 +124,12 @@ public class RobotContainer {
     JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
     JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
     JoystickButton aimDownButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimDownButton);
+    JoystickButton ballsoutButton = new JoystickButton(m_driverController, Constants.Joysticks.kBallsoutButton);
     
     aimDownButton.whileHeld(new AimDown(m_aiming));
     aimUpButton.whileHeld(new AimUp(m_aiming));
     aimToAngleButton.whenPressed(new InstantCommand(m_aiming::enable, m_aiming));
+    ballsoutButton.whenPressed(new BallsOut(m_transporter));
     aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
     turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
