@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.PortMap;
 
@@ -35,6 +36,14 @@ public class Shooter extends SubsystemBase {
     lMaster.set(x);
   }
 
+  public void setRightShooterVoltage(double x) {
+    rMaster.setVoltage(x);
+  }
+
+  public void setLeftShooterVoltage(double x) {
+    lMaster.setVoltage(x);
+  }
+
   public void shooterStop() {
     rMaster.set(0);
     lMaster.set(0);
@@ -42,6 +51,17 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("LeftRPS", getLeftRPS());
+    SmartDashboard.putNumber("RightRPS", getRightRPS());
     // This method will be called once per scheduler run
   }
+
+  public double getLeftRPS(){
+    return(lMaster.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
+  }
+
+  public double getRightRPS(){
+    return(rMaster.getSelectedSensorVelocity()/4096) * -10; // ticks per rotation - 4096
+  }
+
 }
