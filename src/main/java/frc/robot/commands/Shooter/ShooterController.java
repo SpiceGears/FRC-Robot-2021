@@ -19,7 +19,7 @@ import frc.robot.subsystems.Shooter;
 
 public class ShooterController extends CommandBase {
   /** Creates a new ShooterController. */
-  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(820);
+  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(900);
   
 
   private static final double kFlywheelMomentOfInertia = 0.00020; // kg * m^2
