@@ -28,6 +28,7 @@ import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.Shooter.ShooterController;
 import frc.robot.commands.Shooter.ShooterRotate;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
@@ -126,7 +127,8 @@ public class RobotContainer {
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
 
-    shooterButton.whileHeld(new ShooterRotate(m_shooter));
+    // shooterButton.whileHeld(new ShooterRotate(m_shooter));
+    shooterButton.whileHeld(new ShooterController(m_shooter));
 
 }
 
