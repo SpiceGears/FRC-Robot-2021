@@ -17,6 +17,14 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public final class Constants {
 
 
+    //Shooter
+
+    public static class Shooter {
+        public static final int shooterRPMsetPoint = 900;
+        public static final int minRPStoShoot = 50;
+    }
+
+
     
     //Talon
 

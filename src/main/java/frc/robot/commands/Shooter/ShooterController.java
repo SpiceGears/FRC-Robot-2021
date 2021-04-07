@@ -15,11 +15,12 @@ import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
 import edu.wpi.first.wpiutil.math.Nat;
 import edu.wpi.first.wpiutil.math.VecBuilder;
 import edu.wpi.first.wpiutil.math.numbers.N1;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterController extends CommandBase {
   /** Creates a new ShooterController. */
-  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(900);
+  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(Constants.Shooter.shooterRPMsetPoint);
   
 
   private static final double kFlywheelMomentOfInertia = 0.00020; // kg * m^2
