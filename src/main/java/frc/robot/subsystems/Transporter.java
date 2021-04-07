@@ -25,7 +25,7 @@ public class Transporter extends SubsystemBase {
     ultrasonic = new Ultrasonic(3, 4, Unit.kMillimeters);
 
     transporterMotor.configFactoryDefault();
-    ultrasonic.setAutomaticMode(true);
+    Ultrasonic.setAutomaticMode(true);
   }
 
   @Override

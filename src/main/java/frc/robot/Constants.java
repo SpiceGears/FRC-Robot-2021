@@ -50,6 +50,13 @@ public final class Constants {
 
         public static final double wheelLenght = 0.18; //0.2032; //wheelLenght
 
+        public static final double kTurnToleranceDeg = 0.5;
+        public static final double kTurnRateToleranceDegPerS = 8;
+
+        public static final double kPDriveTrainTurnToAngle = 0.1 * 0.6;
+        public static final double kIDriveTrainTurnToAngle = 0.0015 * 0.6;
+        public static final double kDDriveTrainTurnToAngle = 0.01 * 0.6;
+        
         //Drive Train Autonomus
         public static class Autonomus{
             public static final double ksVolts = 1.31;//1.02;
@@ -66,11 +73,24 @@ public final class Constants {
         }
     }
 
+    //Shooter
+    public static class Shooter{
+        public static final double kPAimToAngle = 0.05 * 1;
+        public static final double kIAimToAngle = 0.0 * 1;
+        public static final double kDAimToAngle = 0.0 * 1;
+    }
+
     //Joystick
     public static class Joysticks{
         //Drive
         public static final double kDriverJoystickDeadzone = 0.12;
         public static final double driveTurnDivide = 1.17;
+
+        //Shooter
+        public static final int kTurnToAngleButton = 1;
+        public static final int kAimToAngleButton = 2;
+        public static final int kAimUpButton = 6;
+        public static final int kAimDownButton = 5;
 
         //Intake
         public static final int kIntakeCloseButton = 9;
