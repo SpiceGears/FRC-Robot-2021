@@ -24,7 +24,7 @@ public class LEDstate extends SubsystemBase {
 
   @Override
   public void periodic() { 
-    epilepsy();
+    rainbow();
     LEDS.setData(LEDBuffer);
   }
 

@@ -30,13 +30,17 @@ import frc.robot.commands.Drive.TurnToAngle;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.Shooter.ShooterController;
+import frc.robot.commands.Shooter.ShooterRotate;
 import frc.robot.commands.Shooter.AimDown;
 import frc.robot.commands.Shooter.AimUp;
 import frc.robot.commands.Transporter.BallsOut;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDstate;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Transporter;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.Aiming;
@@ -58,6 +62,8 @@ public class RobotContainer {
 
   private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
+  private final Shooter m_shooter =  new Shooter();
+  private final LEDstate m_lLeDstate = new LEDstate();
   private final Aiming m_aiming = new Aiming(m_limelight, 0);
 
 
@@ -120,6 +126,10 @@ public class RobotContainer {
     JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
     JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
 
+    JoystickButton shooterButton = new JoystickButton(m_driverController, Constants.Joysticks.kShooterShooting);
+
+
+
     JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
     JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
     JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
@@ -135,6 +145,10 @@ public class RobotContainer {
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
+
+    // shooterButton.whileHeld(new ShooterRotate(m_shooter));
+    shooterButton.whileHeld(new ShooterController(m_shooter));
+
 }
 
   /**
