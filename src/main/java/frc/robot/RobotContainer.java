@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
@@ -29,12 +30,15 @@ import frc.robot.commands.Drive.TurnToAngle;
 import frc.robot.commands.Intake.IntakeClose;
 import frc.robot.commands.Intake.IntakeOpen;
 import frc.robot.commands.Intake.IntakeRotate;
+import frc.robot.commands.Shooter.AimDown;
+import frc.robot.commands.Shooter.AimUp;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.NetworkTablesSub;
 import frc.robot.subsystems.Transporter;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.subsystems.Aiming;
 
 
 import java.io.IOException;
@@ -51,16 +55,16 @@ public class RobotContainer {
   public final DriveTrain m_robotDrive = new DriveTrain();
   public final NetworkTablesSub m_nNetworkTablesSub = new NetworkTablesSub();
 
-  private final Command balonAuto = getAutonomousCommandFromPath("balon");
-  private final Command prosto3mAuto = getAutonomousCommandFromPath("prosto3m");
   private final LimeLight m_limelight = new LimeLight();
   private final Intake m_intake = new Intake();
+  private final Aiming m_aiming = new Aiming(m_limelight, 0);
 
 
   private final Transporter m_transporter = new Transporter();
   private final MoveIfBall moveIfBall = new MoveIfBall(m_transporter);
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
+  
   
   XboxController m_driverController = new XboxController(0);
 
@@ -114,8 +118,16 @@ public class RobotContainer {
     JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
     JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
     JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
+
     JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
+    JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
+    JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
+    JoystickButton aimDownButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimDownButton);
     
+    aimDownButton.whileHeld(new AimDown(m_aiming));
+    aimUpButton.whileHeld(new AimUp(m_aiming));
+    aimToAngleButton.whenPressed(new InstantCommand(m_aiming::enable, m_aiming));
+    aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
     turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));

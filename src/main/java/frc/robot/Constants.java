@@ -65,6 +65,13 @@ public final class Constants {
         }
     }
 
+    //Shooter
+    public static class Shooter{
+        public static final double kPAimToAngle = 0.05 * 1;
+        public static final double kIAimToAngle = 0.0 * 1;
+        public static final double kDAimToAngle = 0.0 * 1;
+    }
+
     //Joystick
     public static class Joysticks{
         //Drive
@@ -73,6 +80,9 @@ public final class Constants {
 
         //Shooter
         public static final int kTurnToAngleButton = 1;
+        public static final int kAimToAngleButton = 2;
+        public static final int kAimUpButton = 6;
+        public static final int kAimDownButton = 5;
 
         //Intake
         public static final int kIntakeCloseButton = 9;

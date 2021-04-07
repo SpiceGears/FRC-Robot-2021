@@ -45,6 +45,7 @@ public class PortMap {
     public static int kIntakeSolenoidA = 0;
     public static int kIntakeSolenoidB = 1;
     public static int kIntakeMotor = 8;
+    }
     
     // Aiming
     public static class Aiming{
@@ -52,7 +53,7 @@ public class PortMap {
         public static int kAimMotor = 7;
 
         public static int kPotentiometer = 0; // Analog
-        }
+        
     }
 
 
