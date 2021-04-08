@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Ultrasonic;
 import edu.wpi.first.wpilibj.Ultrasonic.Unit;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.PortMap;
 
 public class Transporter extends SubsystemBase {
@@ -31,23 +32,27 @@ public class Transporter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("is ball intake", isBallIntake());
-    SmartDashboard.putBoolean("isTransporterFull", isTransporterFull());
-    
+    logs();
   }
-
+  
   public double getUltrasonicDistance(){
     return ultrasonic.getRangeMM()/10;
   }
-
+  
   public boolean isTransporterFull(){
     return !limitSwitch.get();
   }
-
+  
   public boolean isBallIntake(){
-    if (getUltrasonicDistance() < 13 || getUltrasonicDistance() > 26){
+    if (getUltrasonicDistance() < Constants.Intake.minUltrasonicDistanceToDelectBall ||
+          getUltrasonicDistance() > Constants.Intake.maxUltrasonicDistanceToDelectBall){
       return true;
     }
     return false;
+  }
+  
+  private void logs(){
+    SmartDashboard.putBoolean("is ball intake", isBallIntake());
+    SmartDashboard.putBoolean("isTransporterFull", isTransporterFull());    
   }
 }

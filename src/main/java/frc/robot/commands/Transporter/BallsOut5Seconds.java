@@ -9,18 +9,20 @@ import java.util.TimerTask;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import frc.robot.Constants;
 import frc.robot.Veribles;
 import frc.robot.subsystems.Transporter;
 
-public class BallsOut5S extends InstantCommand {
+public class BallsOut5Seconds extends InstantCommand {
   Transporter transporter; 
 
-  /** Creates a new ShitTrashBalls. */
-  public BallsOut5S(Transporter _transporter) {
-    addRequirements(_transporter);
-    transporter = _transporter;
-
-    // Use addRequirements() here to declare subsystem dependencies.
+  /**Spins transpoter for 5 seconds. 
+   * 
+   * @param transporter transpoter subsustem that command use.
+  */
+  public BallsOut5Seconds(Transporter transporter) {
+    addRequirements(transporter);
+    this.transporter = transporter;
   }
 
   // Called when the command is initially scheduled.
@@ -28,7 +30,7 @@ public class BallsOut5S extends InstantCommand {
   public void initialize() {
     if(!Veribles.getInstance().isBallsOutSheduled){
       Veribles.getInstance().isBallsOutSheduled = true;
-      transporter.transporterMotor.set(ControlMode.PercentOutput, 0.3);
+      transporter.transporterMotor.set(ControlMode.PercentOutput, Constants.Transpoter.transporterMotorSpeednWhenItsEmptying);
 
       new Timer().schedule(new TimerTask(){
         public void run() {
@@ -41,6 +43,6 @@ public class BallsOut5S extends InstantCommand {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
-
+  public void end(boolean interrupted) {
+  }
 }

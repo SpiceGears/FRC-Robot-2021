@@ -16,21 +16,26 @@ import frc.robot.subsystems.LimeLight;
 public class TurnToAngle extends PIDCommand {
 LimeLight limeLight;
 
-  /** Creates a new TurnToAngle. */
-  public TurnToAngle(LimeLight _limelight, double setpoint, DriveTrain driveTrain) {
+  /** Turns robot to angle
+   * 
+   * @param setpoint setpoint at which the robot is striving.
+   * @param limelight limelight subsustem that command use.
+   * @param driveTrain driveTrain subsustem that command use.
+   */
+  public TurnToAngle(LimeLight limelight, double setpoint, DriveTrain driveTrain) {
     super(
         // The controller that the command will use
         new PIDController(Constants.DriveTrain.kPDriveTrainTurnToAngle, Constants.DriveTrain.kIDriveTrainTurnToAngle, Constants.DriveTrain.kDDriveTrainTurnToAngle),
         // This should return the measurement
-        _limelight::getXOffset,
+        limelight::getXOffset,
         // This should return the setpoint (can also be a constant)
         setpoint,
         // This uses the output
         output -> {
           driveTrain.setSpeedDriveTrainPercentOutput(0, 0, output);
         });
-        limeLight = _limelight;
-        limeLight.setMode(3);
+        this.limeLight = limelight;
+        limeLight.setLEDMode(3);
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
 

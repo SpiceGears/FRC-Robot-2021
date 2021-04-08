@@ -6,9 +6,9 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.PortMap;
 import frc.robot.Veribles;
 
@@ -20,12 +20,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
 
-  DoubleSolenoid intakeSolenoid;
-  Joystick driverJoy;
   WPI_VictorSPX intakeMotor;
-  long delayToOffSolenoid;
+
+  DoubleSolenoid intakeSolenoid;
   Compressor compressor;
-  boolean isIntakeOpen;
 
 
   public Intake() {
@@ -33,16 +31,13 @@ public class Intake extends SubsystemBase {
     intakeMotor = new WPI_VictorSPX(PortMap.Intake.kIntakeMotor);
     compressor = new Compressor(0);
 
-    delayToOffSolenoid = 700;
-
     intakeSolenoid.set(Value.kForward);
-    isIntakeOpen = false;
+    Veribles.getInstance().isIntakeOpen = false;
   }
 
   // Closes intake
   public void intakeClose() {
     Veribles.getInstance().isIntakeOpen = false;
-    isIntakeOpen = false;
     intakeSolenoid.set(Value.kForward);
     
     TimerTask task = new TimerTask() {
@@ -52,7 +47,7 @@ public class Intake extends SubsystemBase {
     };
 
     Timer timer = new Timer();
-    timer.schedule(task, delayToOffSolenoid);
+    timer.schedule(task, Constants.Intake.solenoidStateSwitchDelay);
   }
 
   // Opens Intake
@@ -68,14 +63,14 @@ public class Intake extends SubsystemBase {
     };
 
     Timer timer = new Timer();
-    timer.schedule(task, delayToOffSolenoid);
-    isIntakeOpen = true;
+    timer.schedule(task, Constants.Intake.solenoidStateSwitchDelay);
+    Veribles.getInstance().isIntakeOpen = true;
   }
 
   // Rotates Intake
   public void intakeRotate() {
-    if (isIntakeOpen) {
-      intakeMotor.set(0.35);
+    if (Veribles.getInstance().isIntakeOpen) {
+      intakeMotor.set(Constants.Intake.maxIntakeMotorSpeed);
     } else {
       intakeMotor.set(0);
     }
@@ -88,9 +83,9 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // This method will be called once per scheduler run
     if(Veribles.getInstance().isAutonomusEnabled){
       intakeRotate();
     }
-    // This method will be called once per scheduler run
   }
 }

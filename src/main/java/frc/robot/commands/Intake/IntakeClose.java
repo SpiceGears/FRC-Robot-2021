@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class IntakeClose extends CommandBase {
-  /** Creates a new IntakeClose. */
-  private final Intake m_intake;
-  public IntakeClose(Intake subsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_intake = subsystem;
-    addRequirements(subsystem);
+  /** Closes intake. 
+   * 
+   * @param intake intake subsustem that command use.
+  */
+  private final Intake intake;
+  public IntakeClose(Intake intake) {
+    addRequirements(intake);
+    this.intake = intake;
   }
 
   // Called when the command is initially scheduled.
@@ -23,12 +25,13 @@ public class IntakeClose extends CommandBase {
 
   @Override
   public void execute() {
-    m_intake.intakeClose();
+    intake.intakeClose();
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

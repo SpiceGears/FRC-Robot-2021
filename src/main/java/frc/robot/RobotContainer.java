@@ -36,7 +36,7 @@ import frc.robot.commands.Shooter.ShooterController;
 import frc.robot.commands.Shooter.AimDown;
 import frc.robot.commands.Shooter.AimUp;
 import frc.robot.commands.Transporter.BallsOut;
-import frc.robot.commands.Transporter.BallsOut5S;
+import frc.robot.commands.Transporter.BallsOut5Seconds;
 import frc.robot.commands.Transporter.MoveIfBall;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDstate;
@@ -70,14 +70,14 @@ public class RobotContainer {
 
 
   private final Transporter m_transporter = new Transporter();
-  private final MoveIfBall moveIfBall = new MoveIfBall(m_transporter, m_intake);
+  private final MoveIfBall m_moveIfBall = new MoveIfBall(m_transporter, m_intake);
 
   SendableChooser<String> m_chooser = new SendableChooser<>();
   
   
   XboxController m_driverController = new XboxController(0);
 
-  NetworkTable mNetworkTable;
+  NetworkTable m_NetworkTable;
   NetworkTableEntry isRight;
   NetworkTableEntry isLeft;
   NetworkTableEntry isDown;
@@ -90,7 +90,7 @@ public class RobotContainer {
 
     m_chooser.setDefaultOption("none Auto", "null");
     m_chooser.addOption("balon Auto", "balonAuto");
-    m_chooser.addOption("galaxy seartch", "galaxySearch");
+    m_chooser.addOption("galaxy seartch Auto", "galaxySearch");
     m_chooser.addOption("prosto3m Auto", "prosto3mAuto");
     m_chooser.addOption("koloR2m Auto", "koloR2m");
     m_chooser.addOption("barrel Auto", "barrel");
@@ -102,7 +102,7 @@ public class RobotContainer {
     // Configure default commands
     // Set the default drive command to split-stick arcade drive
     m_lLeDstate.setDefaultCommand(new TargetToLed(m_lLeDstate, m_limelight));
-    m_transporter.setDefaultCommand(moveIfBall);
+    m_transporter.setDefaultCommand(m_moveIfBall);
     m_robotDrive.setDefaultCommand(
         // A split-stick arcade command, with forward/backward controlled by the left
         // hand, and turning controlled by the right.
@@ -125,29 +125,44 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
-    JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
-    JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
-
-    JoystickButton shooterButton = new JoystickButton(m_driverController, Constants.Joysticks.kShooterShooting);
-    JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
-    JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
-    JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
-    JoystickButton aimDownButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimDownButton);
-    JoystickButton ballsoutButton = new JoystickButton(m_driverController, Constants.Joysticks.kBallsoutButton);
     
-    aimDownButton.whileHeld(new AimDown(m_aiming));
-    aimUpButton.whileHeld(new AimUp(m_aiming));
-    aimToAngleButton.whenPressed(new InstantCommand(m_aiming::enable, m_aiming));
-    ballsoutButton.whenPressed(new BallsOut5S(m_transporter));
-    aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
-    turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
+    /**Intake close */
+    JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
     intakeCloseButton.whenPressed(new IntakeClose(m_intake));
+
+    /**Intake open */
+    JoystickButton intakeOpenButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeOpenButton);
     intakeOpenButton.whenPressed(new IntakeOpen(m_intake));
+
+    /**Intake rotate */
+    JoystickButton intakeRotateButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeRotateButton);
     intakeRotateButton.whileHeld(new IntakeRotate(m_intake));
 
+    /**Turn to angle */
+    JoystickButton turnToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kTurnToAngleButton);
+    turnToAngleButton.whileHeld(new TurnToAngle(m_limelight, 0, m_robotDrive));
+    
+    /**Aim to angle */
+    JoystickButton aimToAngleButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimToAngleButton);
+    aimToAngleButton.whenPressed(new InstantCommand(m_aiming::enable, m_aiming));
+    aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
+    
+    /**Aim up */
+    JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
+    aimUpButton.whileHeld(new AimUp(m_aiming));
+    
+    /**Aim down */
+    JoystickButton aimDownButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimDownButton);
+    aimDownButton.whileHeld(new AimDown(m_aiming));
+    
+    /**Balls out */
+    JoystickButton ballsoutButton = new JoystickButton(m_driverController, Constants.Joysticks.kBallsoutButton);
+    ballsoutButton.whenPressed(new BallsOut5Seconds(m_transporter));
+    
+    /**Shoot */
+    JoystickButton shootButton = new JoystickButton(m_driverController, Constants.Joysticks.kShooterShooting);
     // shooterButton.whileHeld(new ShooterRotate(m_shooter));
-    shooterButton.whileHeld(
+    shootButton.whileHeld(
         new ParallelCommandGroup(
         new ShooterController(m_shooter),
         new IntakeOpen(m_intake),
@@ -158,13 +173,6 @@ public class RobotContainer {
     ));
 
 }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-
 
   /**
    * 
@@ -181,19 +189,6 @@ public Command getAutonomousCommandFromPath(String fileName) {
     } catch (IOException ex) {
         DriverStation.reportError("Unable to open trajectory: " + trajectoryJSON, ex.getStackTrace());
     }
-
-    // Trajectory trajectory =
-    // TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(0.7, 0.7), new Translation2d(1.4, -0.7)),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(2, 0, new Rotation2d(0)),
-    //     // Pass config
-    //     config);
-
-
 
         RamseteCommand ramseteCommand =
             new RamseteCommand(
@@ -237,11 +232,11 @@ public Command getAutonomousCommandFromPath(String fileName) {
     }
 
     public SequentialCommandGroup galaxyAutoCommend(){
-        mNetworkTable = NetworkTableInstance.getDefault().getTable("DetectedObjects");
+        m_NetworkTable = NetworkTableInstance.getDefault().getTable("DetectedObjects");
 
-        isRight = mNetworkTable.getEntry("is_ball_right");
-        isLeft = mNetworkTable.getEntry("is_ball_left");
-        isDown = mNetworkTable.getEntry("is_ball_under_line");
+        isRight = m_NetworkTable.getEntry("is_ball_right");
+        isLeft = m_NetworkTable.getEntry("is_ball_left");
+        isDown = m_NetworkTable.getEntry("is_ball_under_line");
 
         if(isDown.getBoolean(false)){
             if(isLeft.getBoolean(false) || isRight.getBoolean(false)){
@@ -250,7 +245,6 @@ public Command getAutonomousCommandFromPath(String fileName) {
                     new WaitCommand(0.3),
                     new ParallelRaceGroup(
                         new AutoDrivePath(m_robotDrive, "galaxySearchA_RED")
-                        // new IntakeRotate(m_intake)
                     ),
 
                     new IntakeClose(m_intake)
@@ -261,7 +255,6 @@ public Command getAutonomousCommandFromPath(String fileName) {
                     new WaitCommand(0.3),
                     new ParallelRaceGroup(
                         new AutoDrivePath(m_robotDrive, "galaxySearchB_RED")
-                        // new IntakeRotate(m_intake)
                     ),
 
                     new IntakeClose(m_intake)
@@ -274,7 +267,6 @@ public Command getAutonomousCommandFromPath(String fileName) {
                     new WaitCommand(0.0),
                     new ParallelRaceGroup(
                         new AutoDrivePath(m_robotDrive, "galaxySearchA_BLUE")
-                        // new IntakeRotate(m_intake)
                     ),
 
                     new IntakeClose(m_intake)
@@ -285,7 +277,6 @@ public Command getAutonomousCommandFromPath(String fileName) {
                     new WaitCommand(0.0),
                     new ParallelRaceGroup(
                         new AutoDrivePath(m_robotDrive, "galaxySearchB_BLUE")
-                        // new IntakeRotate(m_intake)
                     ),
 
                     new IntakeClose(m_intake)

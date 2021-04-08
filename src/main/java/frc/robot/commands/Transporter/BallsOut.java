@@ -7,27 +7,30 @@ package frc.robot.commands.Transporter;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Transporter;
 
 public class BallsOut extends CommandBase {
   Transporter transporter; 
 
-  /** Creates a new BallsOut. */
-  public BallsOut(Transporter _transporter) {
-    addRequirements(_transporter);
-    transporter = _transporter;
-
-    // Use addRequirements() here to declare subsystem dependencies.
+  /**Spin transpoter motor. 
+   * 
+   * @param transporter transpoter subsustem that command use.
+  */
+  public BallsOut(Transporter transporter) {
+    addRequirements(transporter);
+    this.transporter = transporter;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    transporter.transporterMotor.set(ControlMode.PercentOutput, 0.3);
+    transporter.transporterMotor.set(ControlMode.PercentOutput, Constants.Transpoter.transporterMotorSpeednWhenItsEmptying);
   }
 
   // Called once the command ends or is interrupted.

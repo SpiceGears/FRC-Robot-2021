@@ -24,19 +24,20 @@ public class NetworkTablesSub extends SubsystemBase {
   }
 
   public String getPowerCelsPlace(){
+    
     String result = powerCellsArray.getString("no_data");
-
-   
-
     SmartDashboard.putString("powerCells", result);
-
     return result;
-}
-
-
+  }
+  
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     getPowerCelsPlace();
+    logs();
+  }
+
+  private void logs() {
   }
 }

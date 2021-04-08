@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class IntakeOpen extends CommandBase {
-  /** Creates a new IntakeClose. */
   private final Intake m_intake;
+  /** Opens intake. 
+   * 
+   * @param aiming aiming subsustem that command use.
+  */
   public IntakeOpen(Intake subsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    m_intake = subsystem;
     addRequirements(subsystem);
+    m_intake = subsystem;
   }
 
   // Called when the command is initially scheduled.

@@ -19,24 +19,31 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterController extends CommandBase {
-  /** Creates a new ShooterController. */
-  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(Constants.Shooter.shooterRPMsetPoint);
-  
 
+  private static final double kSpinupRadPerSec = Units.rotationsPerMinuteToRadiansPerSecond(Constants.Shooter.shooterRPMsetPoint);
   private static final double kFlywheelMomentOfInertia = Constants.Shooter.kFlywheelMomentOfInertia; // kg * m^2
 
+  private final Shooter m_shooter;
+  
   // Reduction between motors and encoder, as output over input. If the flywheel spins slower than
   // the motors, this number should be greater than one.
-  private static final double kFlywheelGearing = 1.0;
 
+  /** Creates a new ShooterController. 
+   * @param shooter 
+  */
+  public ShooterController(Shooter shooter) {
+    addRequirements(shooter);
+    m_shooter = shooter;
+  }
+  
   // The plant holds a state-space model of our flywheel. This system has the following properties:
   //
   // States: [velocity], in radians per second.
   // Inputs (what we can "put in"): [voltage], in volts.
   // Outputs (what we can measure): [velocity], in radians per second.
   private final LinearSystem<N1, N1, N1> m_flywheelPlantLeft =
-      LinearSystemId.createFlywheelSystem(
-          DCMotor.getVex775Pro(2), kFlywheelMomentOfInertia, kFlywheelGearing);
+  LinearSystemId.createFlywheelSystem(
+    DCMotor.getVex775Pro(2), kFlywheelMomentOfInertia, Constants.Shooter.kFlywheelGearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   private final KalmanFilter<N1, N1, N1> m_observerLeft =
@@ -69,7 +76,7 @@ public class ShooterController extends CommandBase {
 
       private final LinearSystem<N1, N1, N1> m_flywheelPlantRight =
       LinearSystemId.createFlywheelSystem(
-          DCMotor.getVex775Pro(2), kFlywheelMomentOfInertia, kFlywheelGearing);
+          DCMotor.getVex775Pro(2), kFlywheelMomentOfInertia, Constants.Shooter.kFlywheelGearing);
 
   // The observer fuses our encoder data and voltage inputs to reject noise.
   private final KalmanFilter<N1, N1, N1> m_observerRight =
@@ -98,16 +105,6 @@ public class ShooterController extends CommandBase {
   // The state-space loop combines a controller, observer, feedforward and plant for easy control.
   private final LinearSystemLoop<N1, N1, N1> m_loopRight =
       new LinearSystemLoop<>(m_flywheelPlantRight, m_controllerRight, m_observerRight, 12.0, 0.020);
-
-      private final Shooter m_shooter;
-  public ShooterController(Shooter subsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    
-      // Use addRequirements() here to declare subsystem dependencies.
-      m_shooter = subsystem;
-      addRequirements(subsystem);
-    
-  }
 
   // Called when the command is initially scheduled.
   @Override

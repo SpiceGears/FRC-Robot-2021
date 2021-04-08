@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 public final class Constants {
     
     //Talon
-
     public static class Talon{
         public static final int kLongCANTimeoutMs = 100;
         public static final double kLongCANTimeoutSec = 0.01;
@@ -26,6 +25,16 @@ public final class Constants {
         public static final double kSlotIdx = 0;
         public static final int kPIDLoopIdx = 0;
         public static final int kTimeoutMs = 30;
+    }
+    
+    //Encoder
+    public static class Encoder{
+        public static final double encoderTicksPerRotation = 4096;
+    }
+
+    //LimeLight
+    public static class LimeLight{
+        public static final Number pipeline = 0;
     }
     
     //Drive Train
@@ -72,6 +81,35 @@ public final class Constants {
         public static final int shooterRPMsetPoint = 2500;
         public static final double kFlywheelMomentOfInertia = 0.0001;
         public static final int minRPStoShoot = 50;
+        public static final double kFlywheelGearing = 1.0;
+    }
+
+    //Aiming
+    public static class Aiming{
+        public static final double maxUpAimingPotentiometerValue = 0.25; // smaller value - aims higher
+        public static final double maxDownAimingPotentiometerValue = 0.48; // bigger value - aims lower
+
+        public static final double maxUpAimigSpeed = -0.3;
+        public static final double maxDownAimigSpeed = 0.2;
+        
+        public static final double maxUpManualAimigSpeed = -0.2;
+        public static final double maxDownManualAimigSpeed = 0.15;
+    }
+
+    //Transpoter
+    public static class Transpoter{
+        public static final double transporterMotorSpeednWhenBallIsInIntake = 0.42;
+        public static final double transporterMotorSpeednWhenItsEmptying= 0.42;
+    }
+
+    //Intake
+    public static class Intake{
+        public static final double minUltrasonicDistanceToDelectBall = 13.0;
+        public static final double maxUltrasonicDistanceToDelectBall = 26.0;
+
+        public static final long solenoidStateSwitchDelay = 300;
+
+        public static final double maxIntakeMotorSpeed = 0.35;
     }
 
     //Joystick
@@ -95,6 +133,11 @@ public final class Constants {
         //shooter
         public static final int kShooterShooting = 3;
     }
+    
+    //LED's
+    public static class LEDs{
 
+        public static final int kLedLength = 58;
+    }
 
 }

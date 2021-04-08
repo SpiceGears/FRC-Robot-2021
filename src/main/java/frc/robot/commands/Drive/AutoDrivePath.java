@@ -20,23 +20,26 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DriveTrain;
 
 public class AutoDrivePath extends CommandBase {
-  /** Creates a new AutoDrivePath. */
-  private DriveTrain m_robotDrive;
-  private String m_flieName;
-  Trajectory trajectory;
-  RamseteCommand ramseteCommand;
-
+    private DriveTrain robotDrive;
+    private String flieName;
+    Trajectory trajectory;
+    RamseteCommand ramseteCommand;
+    
+  /** Follows generated path.
+   * 
+   * @param fileName name of the generated path file in PathFinder apart from ".wpilib.json". 
+   * @param driveTrain driveTrain subsustem that command use.
+   */
   public AutoDrivePath(DriveTrain driveTrain, String fileName) {
-    m_robotDrive = driveTrain;
-    m_flieName = fileName;
     addRequirements(driveTrain);
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.robotDrive = driveTrain;
+    this.flieName = fileName;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    String trajectoryJSON = "paths/output/" + m_flieName + ".wpilib.json";//"paths/prosto3m.wpilib.json";
+    String trajectoryJSON = "paths/output/" + flieName + ".wpilib.json";//"paths/prosto3m.wpilib.json";
     trajectory = new Trajectory();
     try {
         Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve(trajectoryJSON);
@@ -48,7 +51,7 @@ public class AutoDrivePath extends CommandBase {
     ramseteCommand =
     new RamseteCommand(
         trajectory,
-        m_robotDrive::getPose,
+        robotDrive::getPose,
         new RamseteController(
             Constants.DriveTrain.Autonomus.kRamseteB, 
             Constants.DriveTrain.Autonomus.kRamseteZeta),
@@ -57,7 +60,7 @@ public class AutoDrivePath extends CommandBase {
             Constants.DriveTrain.Autonomus.kvVoltSecondsPerMeter,
             Constants.DriveTrain.Autonomus.kaVoltSecondsSquaredPerMeter),
         Constants.DriveTrain.Autonomus.kDriveKinematics,
-        m_robotDrive::getWheelSpeeds,
+        robotDrive::getWheelSpeeds,
         new PIDController(
             Constants.DriveTrain.kPDriveTrainLeft, 
             Constants.DriveTrain.kIDriveTrainLeft,
@@ -67,10 +70,10 @@ public class AutoDrivePath extends CommandBase {
             Constants.DriveTrain.kIDriveTrainRight,
             Constants.DriveTrain.kDDriveTrainRight),
         // RamseteCommand passes volts to the callback
-        m_robotDrive::driveDriveTrainByVoltage,
-        m_robotDrive);
+        robotDrive::driveDriveTrainByVoltage,
+        robotDrive);
 
-        m_robotDrive.resetOdometry(trajectory.getInitialPose());
+        robotDrive.resetOdometry(trajectory.getInitialPose());
 
         ramseteCommand.schedule();
   }
@@ -84,7 +87,7 @@ public class AutoDrivePath extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_robotDrive.driveDriveTrainByVoltage(0, 0);
+    robotDrive.driveDriveTrainByVoltage(0, 0);
   }
 
   // Returns true when the command should end.
@@ -93,53 +96,3 @@ public class AutoDrivePath extends CommandBase {
     return ramseteCommand.isFinished();
   }
 }
-
-
-/*abstract
-
-
-    // Trajectory trajectory =
-    // TrajectoryGenerator.generateTrajectory(
-    //     // Start at the origin facing the +X direction
-    //     new Pose2d(0, 0, new Rotation2d(0)),
-    //     // Pass through these two interior waypoints, making an 's' curve path
-    //     List.of(new Translation2d(0.7, 0.7), new Translation2d(1.4, -0.7)),
-    //     // End 3 meters straight ahead of where we started, facing forward
-    //     new Pose2d(2, 0, new Rotation2d(0)),
-    //     // Pass config
-    //     config);
-
-
-
-        RamseteCommand ramseteCommand =
-            new RamseteCommand(
-                trajectory,
-                m_robotDrive::getPose,
-                new RamseteController(
-                    Constants.DriveTrain.Autonomus.kRamseteB, 
-                    Constants.DriveTrain.Autonomus.kRamseteZeta),
-                new SimpleMotorFeedforward(
-                    Constants.DriveTrain.Autonomus.ksVolts,
-                    Constants.DriveTrain.Autonomus.kvVoltSecondsPerMeter,
-                    Constants.DriveTrain.Autonomus.kaVoltSecondsSquaredPerMeter),
-                Constants.DriveTrain.Autonomus.kDriveKinematics,
-                m_robotDrive::getWheelSpeeds,
-                new PIDController(
-                    Constants.DriveTrain.kPDriveTrainLeft, 
-                    Constants.DriveTrain.kIDriveTrainLeft,
-                    Constants.DriveTrain.kDDriveTrainLeft),
-                new PIDController(
-                    Constants.DriveTrain.kPDriveTrainRight, 
-                    Constants.DriveTrain.kIDriveTrainRight,
-                    Constants.DriveTrain.kDDriveTrainRight),
-                // RamseteCommand passes volts to the callback
-                m_robotDrive::driveDriveTrainByVoltage,
-                m_robotDrive);
-
-        // Reset odometry to the starting pose of the trajectory.
-        m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
-        // Run path following command, then stop at the end.
-        return ramseteCommand.andThen(() -> m_robotDrive.driveDriveTrainByVoltage(0, 0));
-
-*/

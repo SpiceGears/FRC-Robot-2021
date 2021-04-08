@@ -9,6 +9,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.PortMap;
 
 public class Shooter extends SubsystemBase {
@@ -51,17 +52,20 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // This method will be called once per scheduler run
+    logs();
+  }
+  
+  public double getLeftRPS(){
+    return(lMaster.getSelectedSensorVelocity() / Constants.Encoder.encoderTicksPerRotation) * 10;  // ticks per rotation - 4096
+  }
+  
+  public double getRightRPS(){
+    return(rMaster.getSelectedSensorVelocity() / Constants.Encoder.encoderTicksPerRotation) * -10; // ticks per rotation - 4096
+  }
+  
+  private void logs(){
     SmartDashboard.putNumber("LeftRPS", getLeftRPS());
     SmartDashboard.putNumber("RightRPS", getRightRPS());
-    // This method will be called once per scheduler run
   }
-
-  public double getLeftRPS(){
-    return(lMaster.getSelectedSensorVelocity()/4096) * 10;  // ticks per rotation - 4096
-  }
-
-  public double getRightRPS(){
-    return(rMaster.getSelectedSensorVelocity()/4096) * -10; // ticks per rotation - 4096
-  }
-
 }

@@ -19,17 +19,17 @@ public class Aiming extends PIDSubsystem {
   LimeLight limeLight;
 
   /** Creates a new ShooterPID. */
-  public Aiming(LimeLight _limeLight, double setpoint) {
+  public Aiming(LimeLight limeLight, double setpoint) {
     super(
         // The PIDController used by the subsystem
         new PIDController(Constants.Shooter.kPAimToAngle, Constants.Shooter.kIAimToAngle, Constants.Shooter.kDAimToAngle));
 
+    this.limeLight = limeLight;
     aimMotor = new WPI_VictorSPX(PortMap.Aiming.kAimMotor);
-    // aimMotor.setInverted(true);
     potentiometer = new AnalogPotentiometer(PortMap.Aiming.kPotentiometer);
     aimMotor.configFactoryDefault();
+
     setSetpoint(setpoint);
-    limeLight = _limeLight;
   }
 
   @Override
@@ -44,28 +44,36 @@ public class Aiming extends PIDSubsystem {
     return limeLight.getYOffset();
   }
 
+  /**
+   * 
+   * @return Returns position of the potentometer
+   */
   public double getPotentometerPosition(){
     return potentiometer.get();
   }
 
+  /**
+   * Sets the output on the motors, it has protection against lifting or lowering out of range.
+   * @param speed output on the motors.
+   */
   public void set(double speed){
     speed *= -1;
     SmartDashboard.putNumber("speed", speed);
-    if (potentiometer.get() > 0.48){
+    if (potentiometer.get() > Constants.Aiming.maxDownAimingPotentiometerValue){
       // ogranicznik dolu
       if(speed < 0){
         speed = 0;
       }
-    }else if(potentiometer.get() < 0.25){
+    }else if(potentiometer.get() < Constants.Aiming.maxUpAimingPotentiometerValue){
       if(speed > 0){
         speed = 0;
       } 
     }
 
-    if(speed < -0.2){
-      speed = -0.2;
-    }else if(speed > 0.4){
-      speed = 0.4;
+    if(speed < Constants.Aiming.maxUpAimigSpeed){
+      speed = Constants.Aiming.maxUpAimigSpeed;
+    }else if(speed > Constants.Aiming.maxDownAimigSpeed){
+      speed = Constants.Aiming.maxDownAimigSpeed;
     }
     aimMotor.set(speed);
   }

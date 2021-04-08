@@ -6,17 +6,19 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.PortMap;
 
 public class LEDstate extends SubsystemBase {
   private AddressableLED LEDS;
   private AddressableLEDBuffer LEDBuffer;
   private int m_rainbowFirstPixelHueL = 1;
+
   /** Creates a new LEDstate. */
   public LEDstate() {
-    LEDS = new AddressableLED(2);
-    LEDBuffer = new AddressableLEDBuffer(58);
+    LEDS = new AddressableLED(PortMap.LEDS.kLedPWM);
+    LEDBuffer = new AddressableLEDBuffer(Constants.LEDs.kLedLength);
     LEDS.setLength(LEDBuffer.getLength());
     LEDS.setData(LEDBuffer);
     LEDS.start();
@@ -75,25 +77,24 @@ public class LEDstate extends SubsystemBase {
     }
   }
    
-  private void epilepsy(){
-    long nowTime = System.currentTimeMillis();
+  // private void epilepsy(){
+  //   long nowTime = System.currentTimeMillis();
 
-    if(nowTime - oldTimeBlink > 250){
-      flagBlink = !flagBlink;
-      oldTimeBlink = nowTime;
-    }
+  //   if(nowTime - oldTimeBlink > 250){
+  //     flagBlink = !flagBlink;
+  //     oldTimeBlink = nowTime;
+  //   }
 
-    if(flagBlink){
-      for (var i = 0; i < LEDBuffer.getLength(); i++) {
-      LEDBuffer.setHSV(i, (int)(Math.random() *180), 255 ,255);
-      }
-    } else {
-      for (var i = 0; i < LEDBuffer.getLength(); i++) {
-      LEDBuffer.setHSV(i, (int)(Math.random() *180), 255, 255);
-      }
-    }
-
-  }
+  //   if(flagBlink){
+  //     for (var i = 0; i < LEDBuffer.getLength(); i++) {
+  //     LEDBuffer.setHSV(i, (int)(Math.random() *180), 255 ,255);
+  //     }
+  //   } else {
+  //     for (var i = 0; i < LEDBuffer.getLength(); i++) {
+  //     LEDBuffer.setHSV(i, (int)(Math.random() *180), 255, 255);
+  //     }
+  //   }
+  // }
 
   int index = 0;
   
@@ -113,7 +114,6 @@ public class LEDstate extends SubsystemBase {
         index = 0;
       }
     }
-
   }
 
   public void turnOFF(){

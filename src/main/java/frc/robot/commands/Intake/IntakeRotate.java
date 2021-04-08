@@ -8,17 +8,20 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
 public class IntakeRotate extends CommandBase {
-  /** Creates a new IntakeRotate. */
   private final Intake m_intake;
+  /** Turns intake inward. 
+   * 
+   * @param aiming aiming subsustem that command use.
+  */
   public IntakeRotate(Intake subsystem) {
-    // Use addRequirements() here to declare subsystem dependencies.
     m_intake = subsystem;
     addRequirements(subsystem);
   }
 
 // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

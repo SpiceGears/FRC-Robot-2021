@@ -11,9 +11,12 @@ import frc.robot.subsystems.LimeLight;
 public class TargetToLed extends CommandBase {
   LEDstate leDstate;
   LimeLight limeLight;
-  /** Creates a new TargetToLed. */
+  /** Sets the colors of the LEDs depending on the current error. 
+   * 
+   * @param limeLight limeLight subsustem that command use.
+   * @param leDstate leDstate subsustem that command use.
+  */
   public TargetToLed(LEDstate leDstate, LimeLight limeLight) {
-    // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(leDstate, limeLight);
     this.leDstate = leDstate; 
     this.limeLight = limeLight; 
@@ -44,7 +47,8 @@ public class TargetToLed extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+  }
 
   // Returns true when the command should end.
   @Override

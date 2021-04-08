@@ -32,12 +32,6 @@ public class Robot extends TimedRobot {
   // private SequentialCommandGroup m_autonomousSequentialCommandGroup;
 
   private RobotContainer m_robotContainer;
-
-  // public static OI oI;
-  // public static DriveTrain driveTrain;
-
-  // Command driveAuto;
-
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -48,7 +42,6 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
 
     Veribles.getInstance().isAutonomusEnabled = false;
-    
 
     m_robotContainer = new RobotContainer();
 
@@ -76,16 +69,7 @@ public class Robot extends TimedRobot {
       }
 
     }).start();
-
-    // oI = new OI();
-    // initSubsystems();
-    // setDefaultCommands();
-
   }
-
-  // private void initSubsystems() {
-  //   // driveTrain = new DriveTrain();
-  // }
 
   /**
    * This function is called every robot packet, no matter the mode. Use this for
@@ -104,11 +88,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
 
-
-    SmartDashboard.putBoolean("isBallsOutSheduled", Veribles.getInstance().isBallsOutSheduled);
-    SmartDashboard.putBoolean("Is auto enabled", Veribles.getInstance().isAutonomusEnabled);
-
-    //CameraServer cameraServer
+    logs();
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -142,18 +122,14 @@ public class Robot extends TimedRobot {
       case "koloR2m":
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("koloR2m");
         break;
-      case "barrel": // (v: 1.5, A:0.425)
+      case "barrel": // (Velocity: 1.5, Acceleration:0.425 - in path finder)
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("barrel");
         break;
-      case "slalom":// (v: 1.21, A:0.6) 
+      case "slalom":// (Velocity: 1.21, Acceleration:0.6 - in path finder) 
         m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("slalom");
         break;
-      case "bounce":// (v: 1.21, A:0.6)   
+      case "bounce":// (Velocity: 1.21, Acceleration:0.6 - in path finder)   
         m_autonomousCommand = m_robotContainer.complexAutoCommend();
-        // m_autonomousCommand = m_robotContainer.getAutonomousCommandFromPath("bounce2");
-          // .andThen(() -> 
-          //   m_robotContainer.getAutonomousCommandFromPath("bounce1")
-          // );
         break;
       default:
         break;
@@ -203,9 +179,10 @@ public class Robot extends TimedRobot {
 
   }
 
-  // public void setDefaultCommands(){
-  //   driveTrain.setDefaultCommand(new teleopDrive());
-  // }
+  private void logs(){
+    SmartDashboard.putBoolean("isBallsOutSheduled", Veribles.getInstance().isBallsOutSheduled);
+    SmartDashboard.putBoolean("Is auto enabled", Veribles.getInstance().isAutonomusEnabled);
+  }
 }
 
 
