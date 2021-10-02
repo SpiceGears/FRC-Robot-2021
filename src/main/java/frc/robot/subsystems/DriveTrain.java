@@ -41,11 +41,12 @@ public class DriveTrain extends SubsystemBase {
   public DriveTrain() {
     pidController = new PIDcontroller();
     portMap = new PortMap();
+    
+    configurateMotors();
 
     gyro = new AHRS(PortMap.DriveTrain.gyroPort);
     diffDrive = new DifferentialDrive(leftMasterDriveTrain, rightMasterDriveTrain);
     
-    configurateMotors();
     autonomousInit();
   }
 
@@ -166,8 +167,8 @@ public class DriveTrain extends SubsystemBase {
   public void setSpeedDriveTrainPercentOutput(double leftPercentageOutput, double rightPercentageOutput, double turn){
     // leftMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[0]);
     // rightMasterDriveTrain.set(ControlMode.PercentOutput, getLeftWheelOutputWithTurn(leftPercentageOutput, rightPercentageOutput, turn)[1]);
-    leftMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 3) - turn);
-    rightMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 3) + turn);
+    leftMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 2.7) - turn);
+    rightMasterDriveTrain.set(ControlMode.PercentOutput, Math.pow(leftPercentageOutput, 2.7) + turn);
   }
 
   public void stopDriveTrainMotors(){

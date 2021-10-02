@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import frc.robot.commands.Drive.AutoDrivePath;
 import frc.robot.commands.Drive.TurnToAngle;
 import frc.robot.commands.Intake.IntakeClose;
@@ -125,6 +126,8 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    
     
     /**Intake close */
     JoystickButton intakeCloseButton = new JoystickButton(m_driverController, Constants.Joysticks.kIntakeCloseButton);
@@ -148,11 +151,11 @@ public class RobotContainer {
     aimToAngleButton.whenReleased(new InstantCommand(m_aiming::disable, m_aiming)); 
     
     /**Aim up */
-    JoystickButton aimUpButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimUpButton);
+    POVButton aimUpButton = new POVButton(m_driverController, 0);
     aimUpButton.whileHeld(new AimUp(m_aiming));
-    
+
     /**Aim down */
-    JoystickButton aimDownButton = new JoystickButton(m_driverController, Constants.Joysticks.kAimDownButton);
+    POVButton aimDownButton = new POVButton(m_driverController, 180);
     aimDownButton.whileHeld(new AimDown(m_aiming));
     
     /**Balls out */
@@ -171,7 +174,10 @@ public class RobotContainer {
             new BallsOut(m_transporter)
         )
     ));
+}
 
+public void ledTurnOFF(){
+    m_lLeDstate.turnOFF();
 }
 
   /**

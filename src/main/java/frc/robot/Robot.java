@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
 
     new Thread(() -> {
 
-      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(1);
+      UsbCamera camera = CameraServer.getInstance().startAutomaticCapture(0);
       camera.setResolution(camera_width, camera_height);
 
       MjpegServer s = CameraServer.getInstance().addServer("gripStream");
@@ -94,7 +94,7 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
-
+    m_robotContainer.ledTurnOFF();
   }
 
   @Override

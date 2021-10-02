@@ -90,10 +90,10 @@ public final class Constants {
         public static final double maxDownAimingPotentiometerValue = 0.48; // bigger value - aims lower
 
         public static final double maxUpAimigSpeed = -0.3;
-        public static final double maxDownAimigSpeed = 0.2;
+        public static final double maxDownAimigSpeed = 0.6;
         
-        public static final double maxUpManualAimigSpeed = -0.2;
-        public static final double maxDownManualAimigSpeed = 0.15;
+        public static final double maxUpManualAimigSpeed = -0.4;
+        public static final double maxDownManualAimigSpeed = 0.6;
     }
 
     //Transpoter
@@ -119,10 +119,10 @@ public final class Constants {
         public static final double driveTurnDivide = 1.17;
 
         //Shooter
-        public static final int kTurnToAngleButton = 1;
+        public static final int kTurnToAngleButton = 7;
         public static final int kAimToAngleButton = 2;
-        public static final int kAimUpButton = 8;
-        public static final int kAimDownButton = 7;
+        //public static final int kAimUpButton = 3;
+        //public static final int kAimDownButton = 1;
         public static final int kBallsoutButton = 4;
 
         //Intake

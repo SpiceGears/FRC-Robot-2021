@@ -58,7 +58,6 @@ public class Aiming extends PIDSubsystem {
    */
   public void set(double speed){
     speed *= -1;
-    SmartDashboard.putNumber("speed", speed);
     if (potentiometer.get() > Constants.Aiming.maxDownAimingPotentiometerValue){
       // ogranicznik dolu
       if(speed < 0){
@@ -70,11 +69,13 @@ public class Aiming extends PIDSubsystem {
       } 
     }
 
+    SmartDashboard.putNumber("aimingPotencjometr", potentiometer.get());
     if(speed < Constants.Aiming.maxUpAimigSpeed){
       speed = Constants.Aiming.maxUpAimigSpeed;
     }else if(speed > Constants.Aiming.maxDownAimigSpeed){
       speed = Constants.Aiming.maxDownAimigSpeed;
     }
+    SmartDashboard.putNumber("aimingSpeed", speed);
     aimMotor.set(speed);
   }
 }
